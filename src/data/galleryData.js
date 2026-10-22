@@ -1,0 +1,182 @@
+export const GALLERY_DATA = [
+  {
+    id: "gal-1",
+    mediaType: "photo",
+    title: "Darjeeling Tea Valley at Sunrise",
+    location: "Darjeeling, West Bengal",
+    category: "mountains",
+    categoryLabel: "Mountains",
+    aspect: "featured",
+    featured: true,
+    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
+    caption: "Golden morning light breaking over emerald tea hills and mist-covered Himalayan slopes.",
+    alt: "Scenic view of Darjeeling tea hills during sunrise"
+  },
+  {
+    id: "gal-vid-1",
+    mediaType: "video",
+    title: "Sikkim Highland Roads & Mountain Passes",
+    location: "North Sikkim (15,000+ ft)",
+    category: "mountains",
+    categoryLabel: "Mountains",
+    aspect: "landscape",
+    featured: true,
+    duration: "1:45",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-curvy-road-in-a-mountain-valley-41549-large.mp4",
+    posterImage: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+    caption: "Drone capture of winding mountain highways along snow-clad valleys in North Sikkim.",
+    alt: "Video of mountain highway through Himalayan valley"
+  },
+  {
+    id: "gal-2",
+    mediaType: "photo",
+    title: "Gangtok & Mt. Kanchenjunga",
+    location: "Gangtok, Sikkim",
+    category: "mountains",
+    categoryLabel: "Mountains",
+    aspect: "landscape",
+    image: "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=900&q=80",
+    caption: "Misty mountain ridge looking towards the majestic Kanchenjunga peaks in Sikkim.",
+    alt: "Foggy mountain panorama in Sikkim"
+  },
+  {
+    id: "gal-vid-2",
+    mediaType: "video",
+    title: "Dooars Lataguri Forest Safari Expedition",
+    location: "Lataguri & Gorumara National Park",
+    category: "nature",
+    categoryLabel: "Forests & Wildlife",
+    aspect: "landscape",
+    duration: "2:10",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4",
+    posterImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=80",
+    caption: "Cruising through dense sal canopies and tea estates during a jungle jeep safari.",
+    alt: "Video of lush green forest in Dooars"
+  },
+  {
+    id: "gal-3",
+    mediaType: "photo",
+    title: "Dooars Lataguri Tea Trail & Wildlife",
+    location: "Dooars, North Bengal",
+    category: "nature",
+    categoryLabel: "Forests & Wildlife",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=900&q=80",
+    caption: "Lush green canopy and scenic wildlife trails across Lataguri and Dooars forests.",
+    alt: "Forest trail enveloped in lush green trees in North Bengal"
+  },
+  {
+    id: "gal-vid-3",
+    mediaType: "video",
+    title: "Puri Sea Beach Golden Hour Waves",
+    location: "Puri Coast, Odisha",
+    category: "coastal",
+    categoryLabel: "Coastal & Sea",
+    aspect: "landscape",
+    duration: "1:20",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-waves-coming-to-the-beach-5016-large.mp4",
+    posterImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+    caption: "Gentle sunset waves rolling onto Puri Golden Beach with travelers enjoying the evening sea breeze.",
+    alt: "Video of ocean waves at sunset"
+  },
+  {
+    id: "gal-4",
+    mediaType: "photo",
+    title: "Puri Golden Beach & Ocean Sunset",
+    location: "Puri Coast, Odisha",
+    category: "coastal",
+    categoryLabel: "Coastal & Sea",
+    aspect: "landscape",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80",
+    caption: "Peaceful golden waves, evening breeze, and serene horizon at Puri Sea Beach.",
+    alt: "Peaceful beach waves during sunset at Puri coast"
+  },
+  {
+    id: "gal-5",
+    mediaType: "photo",
+    title: "Himalayan Road Trip Adventure",
+    location: "North Sikkim Highway",
+    category: "group",
+    categoryLabel: "Travel Moments",
+    aspect: "portrait",
+    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=900&q=80",
+    caption: "Scenic road journeys through high mountain valleys and pine-covered ridges.",
+    alt: "Travelers enjoying a scenic road journey"
+  },
+  {
+    id: "gal-vid-4",
+    mediaType: "video",
+    title: "Group Holiday Moments & Hill Campfire",
+    location: "Kalimpong Retreat",
+    category: "group",
+    categoryLabel: "Travel Moments",
+    aspect: "portrait",
+    duration: "0:55",
+    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-friends-laughing-and-enjoying-a-bonfire-at-night-42284-large.mp4",
+    posterImage: "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=900&q=80",
+    caption: "Unfiltered laughter, music, and bonfire moments from our client group tour in the hills.",
+    alt: "Video of friends around evening campfire"
+  },
+  {
+    id: "gal-6",
+    mediaType: "photo",
+    title: "Gurudongmar High Altitude Lake",
+    location: "North Sikkim",
+    category: "mountains",
+    categoryLabel: "Mountains",
+    aspect: "landscape",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80",
+    caption: "Crystal turquoise glacial lake surrounded by snow-capped peaks at 17,800 feet.",
+    alt: "High altitude alpine lake surrounded by mountains"
+  },
+  {
+    id: "gal-7",
+    mediaType: "photo",
+    title: "Sundarbans Mangrove Waterway",
+    location: "Sundarbans, West Bengal",
+    category: "nature",
+    categoryLabel: "Forests & Wildlife",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80",
+    caption: "Riverboat cruise navigating through the mystical mangrove creeks of the Sundarbans delta.",
+    alt: "Riverboat cruise in Sundarbans mangrove forest"
+  },
+  {
+    id: "gal-8",
+    mediaType: "photo",
+    title: "Pine Forests of Kalimpong & Lava",
+    location: "Kalimpong, West Bengal",
+    category: "mountains",
+    categoryLabel: "Mountains",
+    aspect: "portrait",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80",
+    caption: "Quiet canopy walks through towering pine and cedar trees in the Eastern Himalayas.",
+    alt: "Pine forest trail in hill station"
+  },
+  {
+    id: "gal-9",
+    mediaType: "photo",
+    title: "Family Getaways & Joyous Moments",
+    location: "Dooars Jungle Resort",
+    category: "group",
+    categoryLabel: "Travel Moments",
+    aspect: "landscape",
+    image: "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=900&q=80",
+    caption: "Unforgettable memories, peaceful tea resort stays, and shared smiles with loved ones.",
+    alt: "Group of happy friends enjoying travel together"
+  }
+];
+
+export const GALLERY_CATEGORIES = [
+  { id: "all", label: "All Moments" },
+  { id: "mountains", label: "🏔️ Mountains & Hills" },
+  { id: "nature", label: "🌿 Forests & Safari" },
+  { id: "coastal", label: "🌊 Coastal & Beach" },
+  { id: "group", label: "🎒 Family & Friends" }
+];
+
+

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle with navy tint -->
+  <rect width="64" height="64" rx="16" fill="#12304A"/>
+  
+  <!-- Rising sun / horizon -->
+  <circle cx="32" cy="24" r="10" fill="#F4A340" opacity="0.9"/>
+  
+  <!-- Abstract mountain / horizon silhouette -->
+  <path d="M12 44L26 28L36 38L42 32L52 44H12Z" fill="#167C80" opacity="0.85"/>
+  
+  <!-- Feather / road curve (peacock feather inspired travel trail) -->
+  <path d="M16 48C24 46 28 36 32 20C36 36 40 46 48 48C38 48 34 38 32 30C30 38 26 48 16 48Z" fill="#F4A340"/>
+  
+  <!-- Center pathway line -->
+  <path d="M32 30V54" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 3"/>
+  <circle cx="32" cy="20" r="3" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,5 @@
+# robots.txt for Journey Architect
+User-agent: *
+Allow: /
+
+Sitemap: https://journeyarchitect.in/sitemap.xml

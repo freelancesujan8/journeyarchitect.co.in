@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node dependencies & build output
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables
+.env
+.env*.local
+!.env.example
+
+# Deployment archives and zips
+*.zip
+*.tar.gz
+
+# Database files and SQLite WAL
+*.db
+*.db-shm
+*.db-wal
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+!server/data/.gitkeep
+
+# Uploads directory
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/certificates/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
