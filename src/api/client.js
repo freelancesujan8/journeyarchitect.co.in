@@ -618,6 +618,65 @@ export const ApiClient = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
+  },
+
+  // ================= Admin Calendar Management =================
+  getAdminCalendarEvents: async (token, { month, startDate, endDate, category, status, priority, search } = {}) => {
+    const params = new URLSearchParams();
+    if (month) params.append('month', month);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (category && category !== 'all') params.append('category', category);
+    if (status && status !== 'all') params.append('status', status);
+    if (priority && priority !== 'all') params.append('priority', priority);
+    if (search && search.trim()) params.append('search', search.trim());
+
+    const qs = params.toString();
+    return fetchJson(`/admin/calendar${qs ? `?${qs}` : ''}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  getAdminCalendarSummary: async (token) => {
+    return fetchJson('/admin/calendar/summary', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  getAdminCalendarEventsForDate: async (token, date) => {
+    return fetchJson(`/admin/calendar/date/${encodeURIComponent(date)}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  createAdminCalendarEvent: async (token, eventData) => {
+    return fetchJson('/admin/calendar', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(eventData)
+    });
+  },
+
+  updateAdminCalendarEvent: async (token, id, eventData) => {
+    return fetchJson(`/admin/calendar/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(eventData)
+    });
+  },
+
+  deleteAdminCalendarEvent: async (token, id) => {
+    return fetchJson(`/admin/calendar/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  toggleAdminCalendarEventStatus: async (token, id) => {
+    return fetchJson(`/admin/calendar/${id}/toggle`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` }
+    });
   }
 };
 export default ApiClient;

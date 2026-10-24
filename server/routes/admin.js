@@ -12,7 +12,10 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+import { calendarRouter } from './calendar.js';
+
 export const adminRouter = express.Router();
+adminRouter.use('/calendar', calendarRouter);
 
 const ADMIN_CREDENTIALS = {
   username: process.env.ADMIN_USERNAME || 'admin',
@@ -24,7 +27,7 @@ const VALID_TOKEN = 'journeyarchitect_admin_session_valid';
 /**
  * Middleware to check admin session
  */
-function requireAdminAuth(req, res, next) {
+export function requireAdminAuth(req, res, next) {
   const token = req.headers['authorization']?.replace('Bearer ', '') || req.headers['x-admin-auth'];
   if (token === VALID_TOKEN) {
     next();

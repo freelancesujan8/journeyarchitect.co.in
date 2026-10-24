@@ -801,3 +801,36 @@ dialog.custom-dialog::backdrop {
   }
 }
 
+/* =========================================
+   ADMIN PANEL SIDEBAR & RESPONSIVE LAYOUT
+   ========================================= */
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    transform: translateX(0) !important;
+  }
+  .admin-main-wrapper {
+    margin-left: 270px !important;
+    width: calc(100% - 270px) !important;
+  }
+  .mobile-sidebar-toggle {
+    display: none !important;
+  }
+  .mobile-sidebar-close {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .admin-main-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  .mobile-sidebar-close {
+    display: flex !important;
+  }
+  .mobile-sidebar-toggle {
+    display: flex !important;
+  }
+}
+
+

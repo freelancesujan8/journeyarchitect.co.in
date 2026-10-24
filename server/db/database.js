@@ -530,6 +530,29 @@ export function initDatabase() {
     );
   `);
 
+  // 15. Calendar events & notes table (Admin Only)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS calendar_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      event_date TEXT NOT NULL,          -- Format 'YYYY-MM-DD'
+      start_time TEXT DEFAULT '',        -- e.g. '09:30'
+      end_time TEXT DEFAULT '',          -- e.g. '11:00'
+      is_all_day INTEGER DEFAULT 1,      -- 1 for all-day, 0 for timed
+      category TEXT DEFAULT 'event',     -- 'event', 'reminder', 'note', 'meeting', 'holiday'
+      priority TEXT DEFAULT 'normal',    -- 'low', 'normal', 'high', 'urgent'
+      status TEXT DEFAULT 'pending',     -- 'pending', 'completed', 'cancelled'
+      description TEXT DEFAULT '',       -- multi-line details / note text / checklist
+      color TEXT DEFAULT '#2563EB',      -- custom color hex code
+      created_by TEXT DEFAULT 'Admin',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_calendar_events_date ON calendar_events(event_date);
+    CREATE INDEX IF NOT EXISTS idx_calendar_events_category ON calendar_events(category);
+    CREATE INDEX IF NOT EXISTS idx_calendar_events_status ON calendar_events(status);
+  `);
+
   // Seed initial packages (Only insert if not already present in database, never overwrite admin edits)
   const insertPackage = db.prepare(`
     INSERT INTO packages (
@@ -786,6 +809,112 @@ export function initDatabase() {
   });
 
   syncCuisines(SEED_CUISINES);
+
+  // Seed initial calendar events & notes if none exist
+  const existingEventsCount = db.prepare('SELECT COUNT(*) as count FROM calendar_events').get().count;
+  if (existingEventsCount === 0) {
+    const formatDate = (offsetDays) => {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+
+    const initialEvents = [
+      {
+        title: 'Client Consultation — North Sikkim Silk Route',
+        event_date: formatDate(0),
+        start_time: '11:00',
+        end_time: '12:30',
+        is_all_day: 0,
+        category: 'meeting',
+        priority: 'high',
+        status: 'pending',
+        description: 'Review custom itinerary adjustments and hotel upgrades for the 6-member group booking.',
+        color: '#2563EB'
+      },
+      {
+        title: 'Payment Follow-up: Puri Beach Tour Booking',
+        event_date: formatDate(0),
+        start_time: '15:00',
+        end_time: '15:30',
+        is_all_day: 0,
+        category: 'reminder',
+        priority: 'urgent',
+        status: 'pending',
+        description: 'Call Mr. Anirban Roy regarding remaining 50% deposit balance before issuing official travel voucher.',
+        color: '#D97706'
+      },
+      {
+        title: 'Darjeeling & Kalimpong Autumn Tour Departure',
+        event_date: formatDate(1),
+        start_time: '06:00',
+        end_time: '08:30',
+        is_all_day: 0,
+        category: 'event',
+        priority: 'high',
+        status: 'pending',
+        description: 'Tour departure from Howrah Station. Verify driver arrival, coordinate luggage loading and hand over welcome kits.',
+        color: '#059669'
+      },
+      {
+        title: 'Vehicle Fleet Servicing & AC Inspection',
+        event_date: formatDate(3),
+        start_time: '14:00',
+        end_time: '16:00',
+        is_all_day: 0,
+        category: 'note',
+        priority: 'normal',
+        status: 'pending',
+        description: 'Scheduled maintenance check for Innova Crysta (WB 24 X 8920) before weekend Dooars wildlife safari tour.',
+        color: '#7C3AED'
+      },
+      {
+        title: 'Catering Menu Tasting — Sharma Wedding Banquet',
+        event_date: formatDate(5),
+        start_time: '16:30',
+        end_time: '18:00',
+        is_all_day: 0,
+        category: 'meeting',
+        priority: 'normal',
+        status: 'pending',
+        description: 'Chef live tasting session for 350-guest Bengali & Mughlai wedding buffet menu selections.',
+        color: '#DB2777'
+      },
+      {
+        title: 'Hotel Vouchers Dispatched: Gangtok Retreat',
+        event_date: formatDate(-2),
+        start_time: '',
+        end_time: '',
+        is_all_day: 1,
+        category: 'reminder',
+        priority: 'normal',
+        status: 'completed',
+        description: 'All 4 deluxe valley-view rooms locked with breakfast vouchers emailed to lead guest.',
+        color: '#475569'
+      }
+    ];
+
+    const insertEvent = db.prepare(`
+      INSERT INTO calendar_events (
+        title, event_date, start_time, end_time, is_all_day,
+        category, priority, status, description, color, created_by
+      ) VALUES (
+        @title, @event_date, @start_time, @end_time, @is_all_day,
+        @category, @priority, @status, @description, @color, 'Admin'
+      )
+    `);
+
+    const insertAllEvents = db.transaction((events) => {
+      for (const ev of events) {
+        insertEvent.run(ev);
+      }
+    });
+
+    insertAllEvents(initialEvents);
+  }
 }
 
 export const SEED_BLOGS = [

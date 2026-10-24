@@ -5,13 +5,15 @@ import {
   TrendingUp, Users, DollarSign, Lock, LogOut, MessageCircle, FileText,
   Video, Globe, Shield, Sparkles, MapPin, Check, X, ArrowUpDown, ExternalLink,
   UploadCloud, Upload, Briefcase, Utensils, UtensilsCrossed, Car, Compass, Hotel, Layers,
-  BookOpen, Bookmark, Tag, Mail, Send, Bell, RotateCcw
+  BookOpen, Bookmark, Tag, Mail, Send, Bell, RotateCcw, Menu
 } from 'lucide-react';
 import SEOHead from '../components/common/SEOHead';
 import { ApiClient } from '../api/client';
 import { generateBookingPDF } from '../utils/pdfGenerator';
 import { getWhatsAppUrl } from '../config/businessConfig';
 import { openWhatsAppInvoice, formatWhatsAppNumber } from '../utils/whatsappInvoice';
+import { AdminSidebar } from '../components/admin/AdminSidebar';
+import { CalendarManager } from '../components/admin/CalendarManager';
 
 /**
  * Reusable Media Upload & Preview Field
@@ -181,7 +183,9 @@ function MediaUploadField({
 
 export default function AdminDashboardPage({ onNavigate }) {
   const [token, setToken] = useState(sessionStorage.getItem('journeyarchitect_admin_token') || '');
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'packages' | 'gallery' | 'services' | 'contact' | 'bookings' | 'payments'
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [calendarSummary, setCalendarSummary] = useState(null);
 
   // Login State
   const [username, setUsername] = useState('admin');
@@ -473,7 +477,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     if (!token) return;
     setLoading(true);
     try {
-      const [statsRes, bookingsRes, packagesRes, galleryRes, servicesRes, contactRes, paymentsRes, logsRes, blogsRes, notifRes, cateringRes, carRentalRes, cuisinesRes, brandingRes] = await Promise.all([
+      const [statsRes, bookingsRes, packagesRes, galleryRes, servicesRes, contactRes, paymentsRes, logsRes, blogsRes, notifRes, cateringRes, carRentalRes, cuisinesRes, brandingRes, calendarRes] = await Promise.all([
         ApiClient.getAdminStats(token),
         ApiClient.getAdminBookings(token, bookingFilter, bookingSearch),
         ApiClient.getAdminPackages(token),
@@ -487,7 +491,8 @@ export default function AdminDashboardPage({ onNavigate }) {
         ApiClient.getAdminCateringLeads(token, cateringFilter, cateringSearch).catch(() => ({ leads: [] })),
         ApiClient.getAdminCarRentalLeads(token, carRentalFilter, carRentalSearch).catch(() => ({ leads: [] })),
         ApiClient.getAdminCateringCuisines(token, cuisineCategoryFilter === 'ALL' ? '' : cuisineCategoryFilter, cuisineSearch).catch(() => ({ cuisines: [] })),
-        ApiClient.getAdminBrandingSettings(token).catch(() => null)
+        ApiClient.getAdminBrandingSettings(token).catch(() => null),
+        ApiClient.getAdminCalendarSummary(token).catch(() => null)
       ]);
 
       if (statsRes?.stats) setStats(statsRes.stats);
@@ -507,6 +512,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       if (carRentalRes?.leads) setCarRentalLeads(carRentalRes.leads);
       if (cuisinesRes?.cuisines) setCuisines(cuisinesRes.cuisines);
       if (brandingRes?.branding) setBrandingSettings(brandingRes.branding);
+      if (calendarRes?.summary) setCalendarSummary(calendarRes.summary);
     } catch (err) {
       console.error('Error loading admin data:', err);
       if (err.message && err.message.includes('authorization')) {
@@ -1351,104 +1357,203 @@ export default function AdminDashboardPage({ onNavigate }) {
 
   // ================= MAIN DASHBOARD =================
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F3F4F6', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', display: 'flex', position: 'relative' }}>
       <SEOHead title="Admin Dashboard | Journey Architect" description="Control center" />
 
-      {/* Top Admin Navigation Header */}
-      <header style={{ backgroundColor: '#0E2235', color: '#FFFFFF', padding: '0.875rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-accent)', letterSpacing: '0.02em' }}>
-              JOURNEY ARCHITECT
-            </span>
-            <span style={{ fontSize: '0.72rem', backgroundColor: 'rgba(255,255,255,0.15)', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 700 }}>
-              Admin Control Center
-            </span>
+      {/* Modern Sidebar Navigation */}
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onNavigate={onNavigate}
+        handleLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        counts={{
+          packagesCount: packages.length,
+          blogsCount: blogs.length,
+          galleryCount: galleryItems.length,
+          cuisinesCount: cuisines.length,
+          cateringCount: cateringLeads.length,
+          cateringNewCount: cateringLeads.filter(l => l.status === 'NEW').length,
+          carRentalCount: carRentalLeads.length,
+          carRentalNewCount: carRentalLeads.filter(l => l.status === 'NEW').length,
+          bookingsCount: bookings.length,
+          bookingsPendingCount: bookings.filter(b => b.booking_status === 'PENDING_PAYMENT').length,
+          paymentsCount: payments.length,
+          calendarTodayCount: calendarSummary?.todayEvents || 0,
+          calendarPendingCount: calendarSummary?.pendingReminders || 0
+        }}
+      />
+
+      {/* Main Workspace Wrapper */}
+      <div
+        className="admin-main-wrapper"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: '#F8FAFC',
+          minHeight: '100vh'
+        }}
+      >
+        {/* Modern Sticky Top Navigation Bar */}
+        <header
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 90,
+            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid #E2E8F0',
+            padding: '0.85rem 1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }}
+        >
+          {/* Left: Mobile Sidebar Toggle + Breadcrumb / Active Tab Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              type="button"
+              className="mobile-sidebar-toggle"
+              onClick={() => setIsSidebarOpen(true)}
+              style={{
+                background: '#F1F5F9',
+                border: '1px solid #CBD5E1',
+                borderRadius: '8px',
+                padding: '8px',
+                color: '#1E293B',
+                cursor: 'pointer',
+                display: 'none',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              aria-label="Toggle navigation drawer"
+            >
+              <Menu size={20} />
+            </button>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Admin Portal /
+                </span>
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-secondary, #167C80)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  {activeTab.replace('-', ' ')}
+                </span>
+              </div>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary, #0E2235)', margin: 0, lineHeight: 1.2 }}>
+                {activeTab === 'calendar' ? 'Calendar & Event Management' :
+                 activeTab === 'overview' ? 'Overview & Analytics' :
+                 activeTab === 'packages' ? 'Tour Packages Catalog' :
+                 activeTab === 'blogs' ? 'Travel Blogs & Stories' :
+                 activeTab === 'gallery' ? 'Photo & Video Media Gallery' :
+                 activeTab === 'cuisines' ? 'Cuisine & Catering Menu' :
+                 activeTab === 'catering' ? 'Catering Leads & Requests' :
+                 activeTab === 'car-rental' ? 'Car Rental Leads & Bookings' :
+                 activeTab === 'branding' ? 'Website Logo & Branding' :
+                 activeTab === 'contact' ? 'Contact Info & Notifications' :
+                 activeTab === 'bookings' ? 'Customer Tour Bookings' :
+                 activeTab === 'payments' ? 'Payments & Financial Logs' :
+                 activeTab === 'logs' ? 'System Audit Activity Logs' : 'Dashboard'}
+              </h1>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Right: Date Badge, Quick Actions, User Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* Live Today's Date Pill */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backgroundColor: '#F1F5F9',
+                padding: '6px 14px',
+                borderRadius: '20px',
+                border: '1px solid #E2E8F0',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#334155'
+              }}
+            >
+              <Calendar size={14} color="var(--color-secondary, #167C80)" />
+              <span>
+                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
+
+            {/* Quick Link to Live Website */}
             <a
               href="/"
               onClick={(e) => { e.preventDefault(); onNavigate('/'); }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.825rem', color: 'rgba(255,255,255,0.85)', textDecoration: 'none', padding: '6px 12px', borderRadius: '6px', backgroundColor: 'rgba(255,255,255,0.08)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.825rem',
+                fontWeight: 600,
+                color: '#475569',
+                textDecoration: 'none',
+                padding: '6px 12px',
+                borderRadius: '8px',
+                backgroundColor: '#F8FAFC',
+                border: '1px solid #E2E8F0',
+                transition: 'all 0.15s ease'
+              }}
+              title="Return to Public Website"
             >
               <Globe size={14} />
-              <span>Live Website</span>
+              <span>Live Site</span>
             </a>
+
+            {/* Quick Logout Button */}
             <button
               type="button"
               onClick={handleLogout}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.825rem', color: '#FCA5A5', backgroundColor: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.825rem',
+                color: '#DC2626',
+                backgroundColor: '#FEF2F2',
+                border: '1px solid #FECACA',
+                padding: '6px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                transition: 'all 0.15s ease'
+              }}
+              title="Sign Out"
             >
               <LogOut size={14} />
               <span>Logout</span>
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Toast Notification Bar */}
-      {feedbackMsg && (
-        <div style={{ backgroundColor: '#10B981', color: '#FFFFFF', padding: '10px 20px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-          <CheckCircle2 size={18} />
-          <span>{feedbackMsg}</span>
-        </div>
-      )}
+        {/* Toast Notification Bar */}
+        {feedbackMsg && (
+          <div style={{ backgroundColor: '#10B981', color: '#FFFFFF', padding: '10px 20px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+            <CheckCircle2 size={18} />
+            <span>{feedbackMsg}</span>
+          </div>
+        )}
 
-      {/* Main Content Area with Tabs */}
-      <div style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        
-        {/* Navigation Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto', paddingBottom: '4px', borderBottom: '2px solid #E5E7EB' }}>
-          {[
-            { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-            { id: 'packages', label: `Tour Packages (${packages.length})`, icon: Package },
-            { id: 'blogs', label: `Travel Blogs (${blogs.length})`, icon: BookOpen },
-            { id: 'gallery', label: `Gallery Media (${galleryItems.length})`, icon: ImageIcon },
-            { id: 'cuisines', label: `Cuisine Menu (${cuisines.length})`, icon: UtensilsCrossed },
-            { id: 'catering', label: `Catering Leads (${cateringLeads.length})`, icon: Utensils, newCount: cateringLeads.filter(l => l.status === 'NEW').length },
-            { id: 'car-rental', label: `Car Rental Leads (${carRentalLeads.length})`, icon: Car, newCount: carRentalLeads.filter(l => l.status === 'NEW').length },
-            { id: 'branding', label: 'Website Logo', icon: Sparkles },
-            { id: 'contact', label: 'Contact & Settings', icon: Phone },
-            { id: 'bookings', label: `Tour Bookings (${bookings.length})`, icon: CalendarCheck, newCount: bookings.filter(b => b.booking_status === 'PENDING_PAYMENT').length },
-            { id: 'payments', label: `Payments (${payments.length})`, icon: CreditCard },
-            { id: 'logs', label: 'Audit Logs', icon: FileText }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isSel = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '10px 16px',
-                  borderRadius: '8px 8px 0 0',
-                  fontSize: '0.9rem',
-                  fontWeight: isSel ? 700 : 600,
-                  backgroundColor: isSel ? '#FFFFFF' : 'transparent',
-                  color: isSel ? 'var(--color-primary)' : '#4B5563',
-                  border: isSel ? '1px solid #E5E7EB' : 'none',
-                  borderBottom: isSel ? '2px solid var(--color-secondary)' : 'none',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <Icon size={17} color={isSel ? 'var(--color-secondary)' : '#6B7280'} />
-                <span>{tab.label}</span>
-                {tab.newCount > 0 && (
-                  <span style={{ backgroundColor: '#EF4444', color: '#FFFFFF', padding: '1px 7px', borderRadius: '10px', fontSize: '0.7rem', fontWeight: 800, marginLeft: '4px' }}>
-                    {tab.newCount} New
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        {/* Workspace Tab Contents */}
+        <div style={{ maxWidth: '1600px', width: '100%', margin: '0 auto', padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+          {/* TAB 0: CALENDAR MANAGEMENT (NEW) */}
+          {activeTab === 'calendar' && (
+            <CalendarManager
+              token={token}
+              onShowToast={(msg) => setFeedbackMsg(msg)}
+            />
+          )}
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
@@ -3785,6 +3890,7 @@ export default function AdminDashboardPage({ onNavigate }) {
           </div>
         )}
 
+      </div>
       </div>
 
       {/* ================= MODAL: ADD / EDIT TOUR PACKAGE ================= */}
