@@ -6,11 +6,15 @@ This repository is ready to deploy directly to **Hostinger**. Two deployment pac
 
 ## 📦 Provided Deployment Zip Files
 
-1. **`hostinger-fullstack-deployment.zip`** (Recommended)
-   - Contains the complete Full-Stack application (Node.js API + SQLite database + React frontend build in `dist/`).
+1. **`final-deployment.zip`** (Complete All-in-One Package)
+   - Contains the complete full-stack project (Source code + Node.js API + SQLite database + Pre-built React frontend in `dist/`).
+   - Self-contained and ready for any deployment scenario, backup, or hosting platform.
+
+2. **`hostinger-fullstack-deployment.zip`** (Streamlined Node.js App)
+   - Contains the production Full-Stack application (Node.js API + SQLite database + React frontend build in `dist/`).
    - Use this if you are using **Hostinger Node.js App** (hPanel/cPanel) or **Hostinger VPS**.
 
-2. **`hostinger-static-frontend.zip`**
+3. **`hostinger-static-frontend.zip`** (Static Frontend Only)
    - Contains only the static production build (`dist/` contents + `.htaccess`).
    - Use this if you are deploying to **Hostinger Shared Web Hosting** (`public_html`) using standard file manager or FTP.
 
