@@ -16,8 +16,8 @@ export function HomePage({ onOpenTripPlanner, navigate }) {
   return (
     <>
       <SEOHead
-        title="Journey Architect | Tour Operator, Car Rental & Catering in Bongaon"
-        description="Plan your holiday with Journey Architect in Bongaon, West Bengal. Tour packages, reliable car rental, and premium catering services for groups and events."
+        title="Journey Architect | Tour Operator, Car Rental & Catering"
+        description="Plan your holiday with Journey Architect. Tour packages, reliable car rental, and premium catering services for groups and events."
         path="/"
       />
 

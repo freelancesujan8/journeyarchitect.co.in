@@ -8,10 +8,10 @@ export function SEOHead({
 }) {
   const siteTitle = title 
     ? `${title} | ${BUSINESS_CONFIG.name}`
-    : `${BUSINESS_CONFIG.name} | Tour Operator in Bongaon, West Bengal`;
+    : `${BUSINESS_CONFIG.name} | ${BUSINESS_CONFIG.tagline}`;
 
   const siteDescription = description || 
-    `Plan your next holiday with ${BUSINESS_CONFIG.name} in Bongaon, West Bengal. Explore available tour options and contact us for personalized travel enquiries.`;
+    `Plan your next holiday with ${BUSINESS_CONFIG.name}. Explore customized tour packages, car rentals, and event catering services.`;
 
   useEffect(() => {
     // Update Page Title

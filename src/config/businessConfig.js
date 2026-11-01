@@ -14,7 +14,7 @@ export const BUSINESS_CONFIG = {
   category: "Tour Operator, Car Rental & Catering",
   concept: "Journey Begins Here",
   tagline: "Your Complete Travel, Car Rental & Catering Partner.",
-  heroSupportingCopy: "Planning a holiday, family vacation, car rental, or catering service? Journey Architect provides complete, reliable, and personalized services in Bongaon & beyond.",
+  heroSupportingCopy: "Planning a holiday, family vacation, car rental, or catering service? Journey Architect provides complete, reliable, and personalized travel and event services.",
   
   // Leadership & Team Information
   founder: {

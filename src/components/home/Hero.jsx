@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Compass, MapPin, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Send, Compass, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../common/Button';
 import { BUSINESS_CONFIG } from '../../config/businessConfig';
 
@@ -151,37 +151,6 @@ export function Hero({ onOpenTripPlanner, navigate }) {
         >
           {/* Hero Left Content */}
           <div className="hero-content animate-slide-up" style={{ maxWidth: '640px' }}>
-            {/* Top Region + Bengali Script Identity Badges */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                flexWrap: 'wrap',
-                marginBottom: '1.25rem'
-              }}
-            >
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.25)',
-                  padding: '5px 12px',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  color: 'var(--color-accent)'
-                }}
-              >
-                <MapPin size={13} />
-                <span>Tour Operator in Bongaon, West Bengal</span>
-              </div>
-            </div>
-
             {/* Headline */}
             <h1
               className="hero-title"
