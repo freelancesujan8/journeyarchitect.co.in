@@ -407,7 +407,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       travel_partner_phone: "",
       whatsapp_number: "917980331022",
       whatsapp_message: "Hello Journey Architect, I would like to plan a tour / enquiry.",
-      email_primary: "journeyarchitect.travel@gmail.com",
+      email_primary: "sudiptajourneys@gmail.com",
       email_support: "contact@journeyarchitect.in",
       address_street: "Tower 02, Flat No - 6B3, Elgin 1, New Batanagar Road",
       address_city: "Maheshtala, Batanagar",

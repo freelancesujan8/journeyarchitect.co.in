@@ -8,10 +8,10 @@ export const DEFAULT_NOTIFICATION_SETTINGS = {
   smtp_host: 'smtp.gmail.com',
   smtp_port: 587,
   smtp_secure: 0,
-  smtp_user: '',
-  smtp_pass: '',
+  smtp_user: 'sudiptajourneys@gmail.com',
+  smtp_pass: 'Himachal_@puchu_2490#6682',
   from_name: 'Journey Architect Bookings',
-  from_email: 'no-reply@journeyarchitect.in'
+  from_email: 'sudiptajourneys@gmail.com'
 };
 
 /**

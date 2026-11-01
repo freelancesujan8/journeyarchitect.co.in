@@ -64,7 +64,7 @@ export const BUSINESS_CONFIG = {
   ],
   whatsapp: "+91 79803 31022",
   whatsappRaw: "917980331022",
-  email: "journeyarchitect.travel@gmail.com",
+  email: "sudiptajourneys@gmail.com",
   
   // Business Hours
   openingHours: "Open Daily: 8:00 AM – 9:30 PM",
@@ -74,11 +74,13 @@ export const BUSINESS_CONFIG = {
   directoryRating: {
     score: "5.0",
     maxScore: "5.0",
-    ratingCount: 24,
-    source: "Verified Business & Client Reviews",
+    ratingCount: 28,
+    source: "Verified Google & Client Reviews",
     verificationNote: "Govt. UDYAM MSME Registered & Trade License Verified."
   },
-  googleRating: "4.9",
+  googleRating: "5.0",
+  googleRatingCount: 28,
+  googleReviewUrl: "https://share.google/sivygyIsAaYgFkLu1",
   
   // Social Media & Web Presence
   facebookUrl: "https://www.facebook.com/share/1BiZE547Cc/",
@@ -86,7 +88,7 @@ export const BUSINESS_CONFIG = {
   xUrl: "https://x.com/nan59130",
   twitterUrl: "https://x.com/nan59130",
   youtubeUrl: "https://www.youtube.com/@SUDIPTANANDI-t9b",
-  googleMapsUrl: "https://maps.google.com/?q=Elgin+1,+New+Batanagar Road,+Maheshtala,+Batanagar,+West+Bengal+700140",
+  googleMapsUrl: "https://share.google/sivygyIsAaYgFkLu1",
   googleMapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.8521039864223!2d88.225574!3d22.496587!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02796075908b9b%3A0x6b09312521c379a!2sBatanagar%2C%20Maheshtala%2C%20West%20Bengal%20700140!5e0!3m2!1sen!2sin!4v1700000000000",
   
   // Announcement Bar

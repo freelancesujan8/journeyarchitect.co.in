@@ -1,6 +1,7 @@
 import React from 'react';
-import { Star, MapPin, HeartHandshake, PhoneCall } from 'lucide-react';
+import { Star, MapPin, HeartHandshake, PhoneCall, ExternalLink } from 'lucide-react';
 import { BUSINESS_CONFIG } from '../../config/businessConfig';
+import { GoogleIcon } from '../common/SocialIcons';
 
 export function TrustStrip() {
   const rating = BUSINESS_CONFIG.directoryRating;
@@ -25,37 +26,61 @@ export function TrustStrip() {
             alignItems: 'center'
           }}
         >
-          {/* Trust Item 1: Verified Directory Rating */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Trust Item 1: Google Real Reviews */}
+          <a
+            href={BUSINESS_CONFIG.googleReviewUrl || BUSINESS_CONFIG.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              textDecoration: 'none',
+              color: 'inherit'
+            }}
+            title="Read Real Customer Reviews on Google Maps"
+          >
             <div
               style={{
                 width: '44px',
                 height: '44px',
                 borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--color-accent-light)',
-                color: 'var(--color-accent-dark)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--color-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                flexShrink: 0
+                flexShrink: 0,
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
               }}
             >
-              <Star size={22} fill="currentColor" />
+              <GoogleIcon size={24} />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--color-primary)' }}>
-                  {rating.score} / {rating.maxScore}
+                  {BUSINESS_CONFIG.googleRating || '5.0'} / 5.0
                 </span>
-                <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
-                  ({rating.ratingCount} Ratings)
-                </span>
+                <div style={{ display: 'flex', color: '#FBBC05' }}>
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={12} fill="#FBBC05" />
+                  ))}
+                </div>
               </div>
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block' }}>
-                {rating.source}
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--color-text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                Real Google Reviews ({BUSINESS_CONFIG.googleRatingCount || 28}+)
+                <ExternalLink size={10} style={{ opacity: 0.7 }} />
               </span>
             </div>
-          </div>
+          </a>
 
           {/* Trust Item 2: Local Travel Assistance */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, Phone, Mail, MessageCircle, Clock, ExternalLink, ShieldCheck, Star, Sparkles, Navigation, ArrowRight, HeartHandshake } from 'lucide-react';
 import { Logo } from './Logo';
-import { FacebookIcon, InstagramIcon, XIcon, YoutubeIcon } from './SocialIcons';
+import { FacebookIcon, InstagramIcon, XIcon, YoutubeIcon, GoogleIcon } from './SocialIcons';
 import { LEGAL_LINKS } from '../../config/navigation';
 import { BUSINESS_CONFIG, getWhatsAppUrl, getPhoneCallUrl } from '../../config/businessConfig';
 
@@ -66,32 +66,61 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
               alignItems: 'center'
             }}
           >
-            {/* Trust item 1 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Trust item 1: Google Real Reviews */}
+            <a
+              href={BUSINESS_CONFIG.googleReviewUrl || BUSINESS_CONFIG.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textDecoration: 'none',
+                color: 'inherit',
+                cursor: 'pointer'
+              }}
+              title="Read Real Customer Reviews on Google Maps"
+            >
               <div
                 style={{
                   width: '42px',
                   height: '42px',
                   borderRadius: '10px',
-                  backgroundColor: 'rgba(244, 163, 64, 0.15)',
-                  color: 'var(--color-accent)',
+                  backgroundColor: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)'
                 }}
               >
-                <Star size={20} fill="currentColor" />
+                <GoogleIcon size={22} />
               </div>
               <div>
-                <strong style={{ fontSize: '0.925rem', color: '#FFFFFF', display: 'block' }}>
-                  {BUSINESS_CONFIG.directoryRating.score}/5.0 Verified Rating
-                </strong>
-                <span style={{ fontSize: '0.78rem', color: 'rgba(255, 255, 255, 0.65)' }}>
-                  Verified Public Directory Listing
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <strong style={{ fontSize: '0.925rem', color: '#FFFFFF', display: 'block' }}>
+                    {BUSINESS_CONFIG.googleRating || '5.0'}/5.0 Google Reviews
+                  </strong>
+                  <div style={{ display: 'flex', color: '#FBBC05' }}>
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={11} fill="#FBBC05" />
+                    ))}
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.78rem',
+                    color: 'rgba(255, 255, 255, 0.75)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  Real Reviews on Google Maps
+                  <ExternalLink size={11} style={{ opacity: 0.8 }} />
                 </span>
               </div>
-            </div>
+            </a>
 
             {/* Trust item 2 */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
