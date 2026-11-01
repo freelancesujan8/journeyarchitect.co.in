@@ -9,7 +9,7 @@
     "dev": "vite",
     "server": "node server.js",
     "dev:all": "concurrently \"node server/server.js\" \"vite\"",
-    "build": "node -e \"import('fs').then(fs => { if (fs.existsSync('dist/index.html')) { console.log('Pre-built dist found! Application ready.'); process.exit(0); } else { import('child_process').then(cp => cp.execSync('npx vite build', {stdio: 'inherit'})); } })\"",
+    "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
