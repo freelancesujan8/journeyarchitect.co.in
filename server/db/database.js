@@ -627,10 +627,11 @@ export function initDatabase() {
         'Constant Care: On-ground support throughout your journey.'
       ]),
       offerings: JSON.stringify([
-        { title: 'North Bengal & Sikkim Hill Retreats', desc: 'Darjeeling, Kalimpong, Gangtok, Pelling, Ravangla, Lachen, Lachung, and Gurudongmar Lake tours.' },
-        { title: 'Wildlife & Tea Forest Trails', desc: 'Dooars, Lataguri, Jaldapara, Gorumara Safari, and tranquil tea estate bungalow stays.' },
-        { title: 'Coastal & Heritage Pilgrimage', desc: 'Puri Jagannath Darshan, Konark Sun Temple, Chilika Lake, Vizag-Araku, and Digha-Mandarmani getaways.' },
-        { title: 'All-India Holiday Packages', desc: 'Kashmir, Himachal, Kerala Backwaters, Golden Triangle, Andaman Islands & South India tours.' }
+        { title: 'North Bengal & Sikkim Hill Retreats', desc: 'Darjeeling, Kalimpong, Gangtok and North Sikkim, plus quieter hill hideaways like Rishap, Sittong, and Charkhol. Made for unhurried days among the mountains.' },
+        { title: 'Wildlife & Tea Estate Trails', desc: 'Dooars, Lataguri, Jaldapara and Gorumara: jungle safaris by day, tea estate bungalows by evening. Best from October to April (National parks remain closed during the monsoon).' },
+        { title: 'Coastal & Heritage Getaways', desc: "Discover India's beautiful coastlines and sacred heritage. From the spiritual shores of Puri and Konark to Vizag-Araku, Digha, Mandarmani, and customized seaside retreats across India's pristine beaches." },
+        { title: 'All-India Holiday Packages', desc: 'Carefully planned immersive journeys: The snowy valleys of Kashmir and Himachal, the vibrant culture of Gujarat, Kerala Backwaters, South India, and the Andaman Islands. Paced to let you enjoy the destination, without the rush.' },
+        { title: 'Weekend Escapes Near Kolkata', desc: 'Short breaks and day excursions crafted for relaxation: Falta riverside stays, Taki and Ichhamati river experiences, and festive winter getaways to Purulia.', fullWidth: true }
       ]),
       faqs: JSON.stringify([
         { q: 'How can I book a customized tour package?', a: 'You can click Plan My Trip or call us at 79803 31022. We discuss your preferred dates, group size, and budget to prepare a tailored itinerary.' },

@@ -242,26 +242,30 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
               <h4 style={{ fontSize: '1.35rem', color: 'var(--color-primary)', marginBottom: '1.25rem' }}>
                 Available Options & Packages
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-                {activeService.offerings.map((offering, idx) => (
-                  <div
-                    key={idx}
-                    className="card-base"
-                    style={{
-                      backgroundColor: '#FFFFFF',
-                      padding: '1.5rem',
-                      borderRadius: 'var(--radius-lg)',
-                      border: '1px solid var(--color-border)'
-                    }}
-                  >
-                    <strong style={{ fontSize: '1rem', color: 'var(--color-primary)', display: 'block', marginBottom: '6px' }}>
-                      {offering.title}
-                    </strong>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                      {offering.desc}
-                    </p>
-                  </div>
-                ))}
+              <div className="service-offerings-grid">
+                {activeService.offerings.map((offering, idx) => {
+                  const isFullWidth = Boolean(offering.fullWidth || (activeService.offerings.length === 5 && idx === 4));
+                  return (
+                    <div
+                      key={idx}
+                      className={`card-base ${isFullWidth ? 'service-offering-full-width' : ''}`}
+                      style={{
+                        backgroundColor: '#FFFFFF',
+                        padding: '1.5rem',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '1px solid var(--color-border)',
+                        transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                      }}
+                    >
+                      <strong style={{ fontSize: '1rem', color: 'var(--color-primary)', display: 'block', marginBottom: '6px' }}>
+                        {offering.title}
+                      </strong>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.55, margin: 0 }}>
+                        {offering.desc}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* FAQs Section for Active Service */}

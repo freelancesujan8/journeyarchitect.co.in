@@ -833,4 +833,24 @@ dialog.custom-dialog::backdrop {
   }
 }
 
+/* =========================================
+   SERVICE OFFERINGS RESPONSIVE GRID
+   ========================================= */
+.service-offerings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .service-offerings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .service-offering-full-width {
+    grid-column: span 2 !important;
+  }
+}
+
+
 
