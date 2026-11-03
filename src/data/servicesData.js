@@ -2,25 +2,26 @@ export const CORE_SERVICES = [
   {
     id: "tour-and-travel",
     slug: "tour-and-travel",
-    title: "Tour and travel",
+    title: "Slow Travel & Tours",
     shortTagline: "Customized Holiday Packages, Domestic & International Tours",
-    description: "Complete domestic and international tour packages with personalized itineraries, verified hotel bookings, mountain permits, and dedicated tour coordinators from Bongaon.",
+    description: "Travel the slow way with Journey Architect. Safe, unhurried journeys through the hills of North Bengal and Sikkim, the forests of Dooars, the shores of Puri and beyond, with 24/7 on-ground support.",
     badge: "Most Popular",
     icon: "Compass",
     heroImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
-    overview: "Journey Architect specializes in turning your travel dreams into seamless, memorable holidays. Whether you seek the misty mountains of Darjeeling & Sikkim, the wilderness of Dooars, the holy shores of Puri, or customized packages across India, we arrange end-to-end travel logistics with honesty, transparent rates, and round-the-clock ground assistance.",
+    overview: "Travel the slow way with Journey Architect. We plan safe, unhurried journeys through the hills of North Bengal and Sikkim, the forests of Dooars, the shores of Puri and beyond. Our tours are designed for families, senior citizens, solo travellers and all-women groups, with transparent pricing and 24/7 on-ground support, so you can simply relax and connect with nature.",
+    highlightsTitle: "Why Travel With Us",
     leadContact: {
       name: "Sudipta Nandi (Founder)",
       phone: "79803 31022",
       alternatePhones: ["98303 54307", "82401 12378"]
     },
     keyFeatures: [
-      "Customized family, couple, and group itineraries",
-      "Handpicked 3-star, 4-star, and boutique homestay options",
-      "All-inclusive plans: Transport, Stays, Meals & Guided Sightseeing",
-      "North Sikkim, Darjeeling, Dooars, Puri, Vizag, Kashmir, Andaman & Goa specialists",
-      "Train & Air ticket booking consultation and hassle-free permit approvals",
-      "Dedicated 24/7 tour manager support during your entire journey"
+      "Tailored for Everyone: Customized itineraries for families, couples, senior citizens, solo travellers and all-women groups.",
+      "Stays Close to Nature: Handpicked boutique stays and authentic homestays, with 3-star and 4-star hotel options to suit your budget.",
+      "Flexible Plans: Transport, guided sightseeing and meal plans that let you explore authentic local cuisine at your own pace.",
+      "Our Destinations: Slow Travel across North Bengal, Sikkim, Dooars, Kashmir, Puri and more.",
+      "Ticket & Permit Help: Train and flight ticket booking, with permit assistance for restricted areas.",
+      "Constant Care: On-ground support throughout your journey."
     ],
     offerings: [
       {

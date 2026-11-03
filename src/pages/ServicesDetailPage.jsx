@@ -194,33 +194,47 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
               >
                 <h4 style={{ fontSize: '1.2rem', color: 'var(--color-primary)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Award size={20} color="var(--color-accent-dark)" />
-                  <span>Key Highlights & Inclusions</span>
+                  <span>{activeService.highlightsTitle || 'Key Highlights & Inclusions'}</span>
                 </h4>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {activeService.keyFeatures.map((feat, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                      <div
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          backgroundColor: 'var(--color-secondary-subtle)',
-                          color: 'var(--color-secondary)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          marginTop: '2px'
-                        }}
-                      >
-                        <Check size={14} />
+                  {activeService.keyFeatures.map((feat, idx) => {
+                    const colonIdx = feat.indexOf(':');
+                    const hasLabel = colonIdx > -1 && colonIdx < 35;
+                    const label = hasLabel ? feat.slice(0, colonIdx) : null;
+                    const content = hasLabel ? feat.slice(colonIdx + 1) : feat;
+
+                    return (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                        <div
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: 'var(--color-secondary-subtle)',
+                            color: 'var(--color-secondary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            marginTop: '2px'
+                          }}
+                        >
+                          <Check size={14} />
+                        </div>
+                        <span style={{ fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.55 }}>
+                          {hasLabel ? (
+                            <>
+                              <strong style={{ color: 'var(--color-primary)', fontWeight: 700 }}>{label}:</strong>
+                              {content}
+                            </>
+                          ) : (
+                            feat
+                          )}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '0.95rem', color: 'var(--color-text-main)', lineHeight: 1.5 }}>
-                        {feat}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
