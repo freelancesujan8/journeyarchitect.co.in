@@ -12,7 +12,14 @@ export const isCategoryMatch = (itemCat, filterCat) => {
   if (itemCat === filterCat) return true;
   const a = itemCat.toLowerCase().replace(/[^a-z0-9]/g, '');
   const b = filterCat.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return a === b;
+  if (a === b) return true;
+  if (b.includes('bengali') && a.includes('bengali')) return true;
+  if (b.includes('north') && (a.includes('north') || a.includes('indian'))) return true;
+  if (b.includes('south') && a.includes('south')) return true;
+  if (b.includes('indochinese') && a.includes('indochinese')) return true;
+  if (b.includes('tandoor') && a.includes('tandoor')) return true;
+  if (b === 'chinese' && a === 'chinese') return true;
+  return a.includes(b) || b.includes(a);
 };
 
 export const CUISINE_CATEGORIES = [
@@ -24,7 +31,7 @@ export const CUISINE_CATEGORIES = [
   },
   { 
     id: 'Indian', 
-    label: 'Indian', 
+    label: 'North Indian', 
     emoji: '🍛', 
     description: 'Royal North Indian curries, rich gravies, slow-cooked Dal Makhani & Awadhi Biryani.' 
   },
@@ -36,7 +43,7 @@ export const CUISINE_CATEGORIES = [
   },
   { 
     id: 'Bengali authentic cuisine', 
-    label: 'Bengali authentic cuisine', 
+    label: 'Authentic Bengali', 
     emoji: '🐟', 
     description: 'Heritage Bengali masterpieces: Bhetki Paturi, Chingri Malaikari, Kosha Mangsho, Luchi & Ilish Bhapa.' 
   },
@@ -48,7 +55,7 @@ export const CUISINE_CATEGORIES = [
   },
   { 
     id: 'Indo-Chinese', 
-    label: 'Indo chinese', 
+    label: 'Indo-Chinese', 
     emoji: '🥡', 
     description: 'Iconic Kolkata Tangra-style Chilli Chicken, Hakka noodles, Manchurian & Honey Chilli Crisps.' 
   },
@@ -201,7 +208,7 @@ export function CuisineWeServeSection({ onSelectDish }) {
             }}
           >
             <ChefHat size={16} />
-            <span>Master Chef Curation • 23 Spice Lane Kitchens</span>
+            <span>Catering by 23 Spice Lane</span>
           </div>
 
           <h2 
@@ -222,11 +229,15 @@ export function CuisineWeServeSection({ onSelectDish }) {
               fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
               color: '#4B5563',
               lineHeight: 1.65,
-              margin: '0 auto'
+              margin: '0 auto 1.25rem auto'
             }}
           >
-            Curated by Co-Founder & Executive Chef <strong>Dipankar Mitra</strong>, our catering repertoire spans authentic regional Bengali feasts, charcoal-fired Tandoor, rich North & South Indian, gourmet Continental, artisanal Italian, and legendary Kolkata Indo-Chinese delicacies. Every dish is cooked fresh with premium unadulterated ingredients.
+            Our menus are curated by Dipankar Mitra, Co-Founder and Executive Chef, who brings years of five-star hotel experience to our kitchen. We serve authentic Bengali feasts, charcoal-fired Tandoor, North and South Indian dishes, Continental, Italian and Kolkata-style Indo-Chinese. Every dish is cooked fresh with quality ingredients.
           </p>
+
+          <span style={{ fontSize: '0.85rem', color: 'var(--color-secondary)', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', display: 'inline-block' }}>
+            Tap a cuisine to see what we cook.
+          </span>
         </div>
 
         {/* Category Filter Pills & Search */}
@@ -587,7 +598,7 @@ export function CuisineWeServeSection({ onSelectDish }) {
               }}
             >
               <Award size={16} />
-              <span>Tailored Gastronomic Experience</span>
+              <span>Custom Menus for Your Celebration</span>
             </div>
 
             <h3 
@@ -599,11 +610,11 @@ export function CuisineWeServeSection({ onSelectDish }) {
                 lineHeight: 1.25
               }}
             >
-              Have a Specific Celebration Menu in Mind?
+              Have a Specific Menu in Mind?
             </h3>
 
             <p style={{ fontSize: '0.925rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.6, margin: 0 }}>
-              Whether you require a traditional Bengali wedding spread with ilish & kosha mangsho, a live wood-fired pizza counter, or strict Satvik / Jain meal preparations, Executive Chef Dipankar Mitra crafts bespoke banquet menus tailored to your budget and guest expectations.
+              Whether you want a traditional Bengali wedding spread with Ilish and Kosha Mangsho, a live pizza counter, or strict Satvik and Jain meals, our Co-Founder and Executive Chef, Dipankar Mitra, will plan the menu around your budget and your guests.
             </p>
           </div>
 
@@ -635,7 +646,7 @@ export function CuisineWeServeSection({ onSelectDish }) {
             </button>
 
             <a
-              href={getWhatsAppUrl("Hello Chef Dipankar, I would like to schedule a customized catering consultation for an upcoming celebration.")}
+              href={getWhatsAppUrl("Hello Chef Dipankar, I would like to schedule a customized catering consultation for an upcoming celebration.", "7980331022")}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -654,7 +665,7 @@ export function CuisineWeServeSection({ onSelectDish }) {
               }}
             >
               <MessageCircle size={16} color="#25D366" />
-              <span>Direct WhatsApp: 95633 95633</span>
+              <span>Direct WhatsApp: 79803 31022</span>
             </a>
           </div>
         </div>

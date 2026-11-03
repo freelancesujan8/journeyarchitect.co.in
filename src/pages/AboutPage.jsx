@@ -50,7 +50,7 @@ export function AboutPage({ onOpenTripPlanner }) {
           >
             <div>
               <span className="eyebrow eyebrow-teal">
-                Our Local Roots
+                Our Story & Vision
               </span>
 
               <h2 className="section-title" style={{ color: 'var(--color-primary)', marginTop: '0.5rem' }}>
@@ -59,13 +59,13 @@ export function AboutPage({ onOpenTripPlanner }) {
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', color: 'var(--color-text-secondary)', fontSize: '1.05rem', lineHeight: 1.7 }}>
                 <p>
-                  Every good journey begins long before the suitcase is packed. It starts with choosing the right destination, understanding the travel routes, selecting comfortable stays, and having someone experienced you can speak with when you need guidance.
+                  Every good journey begins long before the suitcase is packed. It starts with choosing the right destination, understanding the travel routes, selecting comfortable stays, and having an experienced travel partner you can rely on for genuine guidance.
                 </p>
                 <p>
-                  <strong>{BUSINESS_CONFIG.name}</strong> was established to serve travelers in the Bongaon and surrounding North 24 Parganas area who prefer a warm, personalized travel-planning experience over complicated, faceless online booking algorithms.
+                  Driven by decades of luxury hospitality experience, <strong>{BUSINESS_CONFIG.name}</strong> was established to serve travelers who prefer a warm, personalized travel-planning experience over complicated, faceless online booking algorithms.
                 </p>
                 <p>
-                  Whether you are planning an annual family vacation to the Himalayan foothills, a weekend beach break, commercial cab booking for Kolkata airport, or event catering for a group picnic, our goal is to understand your unique preferences and build an arrangement that suits your schedule, comfort, and budget.
+                  Whether you are planning an unhurried family vacation to the Himalayan foothills, a weekend coastal break, reliable airport transfers, or premium event catering, our goal is to understand your unique preferences and build an arrangement that suits your schedule, comfort, and budget.
                 </p>
               </div>
 
@@ -212,7 +212,7 @@ export function AboutPage({ onOpenTripPlanner }) {
             eyebrow="Key People & Leadership"
             eyebrowVariant="teal"
             title="Meet Our Core Team & Leadership"
-            subtitle="Directly accountable, deeply experienced, and committed to giving you the best travel, transport, and culinary experience."
+            subtitle="Directly accountable and deeply experienced. We are committed to delivering seamless holidays, reliable transport, and refined culinary experiences with a personal touch."
           />
 
           <div
@@ -268,11 +268,15 @@ export function AboutPage({ onOpenTripPlanner }) {
               {/* Card Body */}
               <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '1.6rem', color: 'var(--color-primary)', margin: '0 0 4px 0', fontWeight: 800 }}>
-                  Sudipta
+                  Sudipta Nandi
                 </h3>
-                <span style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', fontWeight: 700, marginBottom: '1.25rem' }}>
+                <span style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', fontWeight: 700, marginBottom: '0.75rem' }}>
                   Founder & Owner, Journey Architect
                 </span>
+
+                <div style={{ backgroundColor: 'var(--color-bg)', padding: '10px 14px', borderRadius: '8px', borderLeft: '3px solid var(--color-accent)', marginBottom: '1.25rem', fontStyle: 'italic', fontSize: '0.88rem', color: 'var(--color-primary)', lineHeight: 1.5 }}>
+                  "We don't just plan holidays; we craft seamless experiences where comfort, care, and nature come together."
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', fontSize: '0.95rem', color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '1.75rem' }}>
                   <p style={{ margin: 0 }}>
@@ -476,9 +480,13 @@ export function AboutPage({ onOpenTripPlanner }) {
                 <h3 style={{ fontSize: '1.6rem', color: 'var(--color-primary)', margin: '0 0 4px 0', fontWeight: 800 }}>
                   Soham Chowdhury
                 </h3>
-                <span style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', fontWeight: 700, marginBottom: '1.25rem' }}>
-                  Sales & Business Development Executive
+                <span style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', fontWeight: 700, marginBottom: '0.75rem' }}>
+                  Sales & Marketing Executive
                 </span>
+
+                <div style={{ backgroundColor: 'var(--color-bg)', padding: '10px 14px', borderRadius: '8px', borderLeft: '3px solid var(--color-accent)', marginBottom: '1.25rem', fontStyle: 'italic', fontSize: '0.88rem', color: 'var(--color-primary)', lineHeight: 1.5 }}>
+                  "Every great journey starts with a simple conversation—I am here to perfectly match your travel dreams with our curated experiences."
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', fontSize: '0.95rem', color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
                   <p style={{ margin: 0 }}>
@@ -489,23 +497,21 @@ export function AboutPage({ onOpenTripPlanner }) {
                   </p>
                 </div>
 
-                {/* Focus Areas Box */}
-                <div style={{ backgroundColor: 'var(--color-bg)', padding: '14px 16px', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', border: '1px solid var(--color-border-light)' }}>
-                  <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>
-                    Key Focus Areas:
+                {/* Direct Contact Line */}
+                <div style={{ backgroundColor: 'var(--color-bg)', padding: '12px 14px', borderRadius: 'var(--radius-md)', marginBottom: '1.25rem', border: '1px solid var(--color-border-light)' }}>
+                  <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', fontWeight: 700, display: 'block', marginBottom: '4px' }}>
+                    Direct Contact Line:
                   </span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 600 }}>
-                    <span>✨ Guest Outreach & Personalized Itineraries</span>
-                    <span>🤝 Corporate & Group Tour Partnerships</span>
-                    <span>📍 End-to-End On-Ground Coordination</span>
-                  </div>
+                  <a href="tel:+916289291984" style={{ fontWeight: 700, color: 'var(--color-primary)', fontSize: '0.95rem', textDecoration: 'none' }}>
+                    📞 +91 62892 91984
+                  </a>
                 </div>
 
                 <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <Button
                     variant="whatsapp"
                     size="sm"
-                    href="https://wa.me/917980331022?text=Hello%20Soham,%20I%20would%20like%20to%20connect%20regarding%20travel%20planning%20and%20packages%20with%20Journey%20Architect."
+                    href="https://wa.me/916289291984?text=Hello%20Soham,%20I%20would%20like%20to%20connect%20regarding%20travel%20planning%20and%20packages%20with%20Journey%20Architect."
                     target="_blank"
                     icon={<MessageCircle size={15} />}
                   >
@@ -514,10 +520,10 @@ export function AboutPage({ onOpenTripPlanner }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={onOpenTripPlanner}
-                    icon={<Send size={15} />}
+                    href="tel:+916289291984"
+                    icon={<Phone size={15} />}
                   >
-                    Plan A Trip
+                    Call Now
                   </Button>
                 </div>
               </div>
@@ -549,7 +555,7 @@ export function AboutPage({ onOpenTripPlanner }) {
                     Government Registrations & Verification
                   </h3>
                   <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-                    Fully Licensed Tour Operator, Transport & Catering Business
+                    Registered Tour, Transport & Catering Business
                   </span>
                 </div>
               </div>
@@ -568,12 +574,12 @@ export function AboutPage({ onOpenTripPlanner }) {
                 }}
               >
                 <CheckCircle2 size={16} />
-                <span>Govt. Verified Entity</span>
+                <span>Govt. Registered Entity</span>
               </div>
             </div>
 
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem' }}>
-              Journey Architect is officially recognized under the Ministry of Micro, Small and Medium Enterprises (MSME), Government of India, and operates under a valid West Bengal Municipal Trade License.
+              Journey Architect is registered under the Ministry of Micro, Small and Medium Enterprises (MSME), Government of India, and operates under a valid West Bengal Municipal Trade License.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
@@ -593,7 +599,7 @@ export function AboutPage({ onOpenTripPlanner }) {
                   {BUSINESS_CONFIG.tradeLicenseNo}
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                  West Bengal Municipal Authority Registration
+                  (West Bengal Municipal Authority Registration)
                 </div>
               </div>
 
@@ -613,7 +619,7 @@ export function AboutPage({ onOpenTripPlanner }) {
                   {BUSINESS_CONFIG.udyamRegistrationNo}
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                  Ministry of MSME, Government of India
+                  (Ministry of MSME, Government of India)
                 </div>
               </div>
             </div>
@@ -627,14 +633,17 @@ export function AboutPage({ onOpenTripPlanner }) {
 
               <div>
                 <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', fontWeight: 700 }}>Registered Office</span>
-                <div style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '2px' }}>Elgin 1, New Batanagar Road</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Maheshtala, Batanagar, WB 700140</div>
+                <div style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '2px', fontSize: '0.875rem' }}>
+                  Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal - 700140
+                </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', fontWeight: 700 }}>Verified Services</span>
+                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em', fontWeight: 700 }}>Services</span>
                 <div style={{ fontWeight: 600, color: 'var(--color-primary)', marginTop: '2px' }}>Tour & Travel, Car Rental, Catering</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>All-India Permits & Operations</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Operations:</span> Tours and transport across India
+                </div>
               </div>
             </div>
           </div>

@@ -140,7 +140,12 @@ export function ContactPage() {
                   Office & Team Contact Information
                 </h2>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* Office Locations Header */}
+                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-secondary)', fontWeight: 800, letterSpacing: '0.06em' }}>
+                    Office Locations
+                  </span>
+
                   {/* Head Office Address */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
                     <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-secondary-subtle)', color: 'var(--color-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -148,10 +153,10 @@ export function ContactPage() {
                     </div>
                     <div>
                       <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)', display: 'block', marginBottom: '2px' }}>
-                        Head Office Address
+                        Head Office
                       </strong>
                       <span style={{ fontSize: '0.925rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                        {officeAddress}
+                        Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal - 700140
                       </span>
                     </div>
                   </div>
@@ -163,13 +168,18 @@ export function ContactPage() {
                     </div>
                     <div>
                       <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)', display: 'block', marginBottom: '2px' }}>
-                        Branch Office Address
+                        Branch Office
                       </strong>
                       <span style={{ fontSize: '0.925rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                        {branchAddress}
+                        P-23, Michael Nagar, Kolkata - 700133
                       </span>
                     </div>
                   </div>
+
+                  {/* Key Contacts Header */}
+                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-secondary)', fontWeight: 800, letterSpacing: '0.06em', marginTop: '0.5rem' }}>
+                    Key Contacts
+                  </span>
 
                   {/* Founder & Tour Contact */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', backgroundColor: 'var(--color-bg)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)' }}>
@@ -177,23 +187,21 @@ export function ContactPage() {
                       <Phone size={20} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                         <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>
-                          Founder: {founderName}
+                          Sudipta Nandi (Founder)
                         </strong>
                         <span style={{ fontSize: '0.72rem', backgroundColor: 'var(--color-accent-light)', color: 'var(--color-accent-dark)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                          Tour Packages
+                          Tour Packages & Operations
                         </span>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginTop: '4px' }}>
-                        <a href={`tel:+91${founderPhone.replace(/\D/g, '')}`} style={{ fontSize: '0.925rem', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>
-                          📞 {founderPhone} <span style={{ fontSize: '0.75rem', color: 'var(--color-whatsapp-dark)' }}>(WhatsApp)</span>
+                        <a href="tel:+917980331022" style={{ fontSize: '0.925rem', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>
+                          📞 79803 31022 <span style={{ fontSize: '0.75rem', color: 'var(--color-whatsapp-dark)' }}>(Primary & WhatsApp)</span>
                         </a>
-                        {founderPhoneAlt && (
-                          <span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                            📞 {founderPhoneAlt}
-                          </span>
-                        )}
+                        <span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
+                          📞 <a href="tel:+919830354307" style={{ color: 'inherit', textDecoration: 'none' }}>98303 54307</a> / <a href="tel:+918240112378" style={{ color: 'inherit', textDecoration: 'none' }}>82401 12378</a>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -204,37 +212,56 @@ export function ContactPage() {
                       <Phone size={20} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
                         <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>
-                          Co-Founder: {cofounderName}
+                          Dipankar Mitra (Co-Founder)
                         </strong>
                         <span style={{ fontSize: '0.72rem', backgroundColor: 'var(--color-secondary-subtle)', color: 'var(--color-secondary)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                          Catering & Operations
+                          Catering (23 Spice Lane) & Hospitality
                         </span>
                       </div>
-                      <a href={`tel:+91${cofounderPhone.replace(/\D/g, '')}`} style={{ fontSize: '0.925rem', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none', display: 'block', marginTop: '4px' }}>
-                        📞 {cofounderPhone} <span style={{ fontSize: '0.75rem', color: 'var(--color-whatsapp-dark)' }}>(WhatsApp)</span>
+                      <a href="tel:+919563395633" style={{ fontSize: '0.925rem', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none', display: 'block', marginTop: '4px' }}>
+                        📞 95633 95633 <span style={{ fontSize: '0.75rem', color: 'var(--color-whatsapp-dark)' }}>(Direct & WhatsApp)</span>
                       </a>
                     </div>
                   </div>
 
+                  {/* Soham Chowdhury Contact */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', backgroundColor: 'var(--color-bg)', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-light)' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-md)', backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Phone size={20} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px' }}>
+                        <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>
+                          Soham Chowdhury (Sales & Marketing Executive)
+                        </strong>
+                        <span style={{ fontSize: '0.72rem', backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#2563EB', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                          Guest Inquiries & Business Development
+                        </span>
+                      </div>
+                      <a href="tel:+916289291984" style={{ fontSize: '0.925rem', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none', display: 'block', marginTop: '4px' }}>
+                        📞 62892 91984
+                      </a>
+                    </div>
+                  </div>
 
                   {/* Email & Hours */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                       <Mail size={16} color="var(--color-secondary)" />
-                      <span>{primaryEmail}</span>
+                      <span>📧 Email: <a href="mailto:sudiptajourneys@gmail.com" style={{ color: 'inherit', fontWeight: 600 }}>sudiptajourneys@gmail.com</a></span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                       <Clock size={16} color="var(--color-secondary)" />
-                      <span>{BUSINESS_CONFIG.openingHours}</span>
+                      <span>🕒 Business Hours: Open Daily, 8:00 AM – 9:30 PM</span>
                     </div>
                   </div>
 
                   {/* License & MSME Strip */}
                   <div style={{ padding: '10px 14px', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-secondary-subtle)', border: '1px solid rgba(22, 124, 128, 0.25)', fontSize: '0.8rem', color: 'var(--color-primary)' }}>
                     <div style={{ fontWeight: 700, marginBottom: '2px' }}>
-                      Official Registrations:
+                      Official Registrations
                     </div>
                     <div>Trade License No.: <strong>{tradeLic}</strong></div>
                     <div>UDYAM (MSME) No.: <strong>{udyamNo}</strong></div>

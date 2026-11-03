@@ -654,67 +654,74 @@ export function initDatabase() {
     {
       service_id: 'SRV-002',
       slug: 'car-rental',
-      title: 'Car Rental & Transport Services',
+      title: 'Car Rental & Transfers',
       badge: '24x7 Available',
       icon: 'Car',
       short_tagline: 'Clean AC/Non-AC Cabs, SUVs, Tempo Travellers & Luxury Buses',
-      description: 'Reliable commercial vehicle rentals for local tours, outstation trips, airport & railway station transfers, weddings, and corporate events with experienced, licensed drivers.',
-      overview: 'Journey Architect operates a dependable fleet of sanitized, well-maintained vehicles. From quick Kolkata Airport (CCU) drops from Bongaon to multi-day hill station road trips across North Bengal, Sikkim, and Odisha, we guarantee punctual service and courteous drivers.',
+      description: 'Clean, well-maintained cars with courteous, experienced drivers for transfers and outstation road trips.',
+      overview: 'Clean, well-maintained cars with courteous, experienced drivers. From airport (CCU) and railway station transfers in Kolkata to multi-day road trips across North Bengal, Sikkim and Odisha, we take care of punctual pickups and a safe, comfortable journey.',
       hero_image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80',
       lead_name: 'Journey Architect Transport Desk',
       lead_phone: '79803 31022',
-      lead_alt_phones: '95633 95633, 98303 54307',
+      lead_alt_phones: '98303 54307, 82401 12378, 95633 95633',
       key_features: JSON.stringify([
-        'Clean, sanitized, and commercial-permit verified vehicles',
-        'Experienced mountain and highway drivers with local route mastery',
-        'Transparent per-km and fixed daily package rates with no hidden surcharges',
-        'Kolkata Airport (CCU), Howrah, Sealdah & Bongaon Junction pickup & drop',
-        'AC Sedans, Ertiga, Innova Crysta, Scorpio, Bolero, and Tempo Travellers',
-        'Special vehicle fleets for weddings, ceremonies, school/college excursions & picnics'
+        'Clean, Permitted Vehicles: Sanitized, well-maintained cars with valid commercial permits.',
+        'Experienced Drivers: Drivers experienced on mountain roads and highways, who know the local routes.',
+        'Honest Pricing: Transparent per-km and fixed daily package rates, with every charge explained upfront.',
+        'Station & Airport Transfers: Pickup and drop at Kolkata Airport (CCU), Howrah, Sealdah and Bongaon Junction.',
+        'Choice of Vehicles: AC Sedans, Ertiga, Innova Crysta, Scorpio, Bolero and Tempo Travellers.',
+        'Weddings & Group Trips: Vehicles for weddings, ceremonies, school and college excursions and picnics.'
       ]),
       offerings: JSON.stringify([
-        { title: 'Sedans & Hatchbacks (Swift Dzire, Honda Amaze, WagonR)', desc: 'Ideal for 1-4 passengers, airport drops, local errands, and budget outstation trips.' },
-        { title: 'Premium SUVs (Innova Crysta, Ertiga, Scorpio, Bolero)', desc: 'Comfortable seating for 6-7 passengers, mountain drives, family vacations & long distance road journeys.' },
-        { title: 'Tempo Travellers (13, 17 & 26 Seater)', desc: 'Pushback AC seats, ample luggage space, sound systems, perfect for extended family & friend groups.' },
-        { title: 'Luxury Tourist Buses (32 to 50+ Seaters)', desc: 'Full AC coach buses for school tours, community pilgrimages, corporate trips & marriage guest transfers.' }
+        { title: 'Sedans & Hatchbacks (Swift Dzire, Honda Amaze, WagonR)', desc: 'Ideal for 1 to 4 passengers. Perfect for airport drops, local city errands, and budget-friendly outstation trips.' },
+        { title: 'SUVs & Premium MUVs (Innova Crysta, Ertiga, Scorpio, Bolero)', desc: 'Comfortable seating for 6 to 7 passengers. Best suited for mountain drives, family vacations, and long-distance road journeys.' },
+        { title: 'Tempo Travellers (13, 17 & 26 Seaters)', desc: 'Features pushback AC seats, ample luggage space, and sound systems. Perfect for extended families and large group tours.' },
+        { title: 'Luxury Tourist Buses (32 to 50+ Seaters)', desc: 'Full AC coach buses designed for school excursions, community pilgrimages, corporate trips, and wedding guest transfers.' }
       ]),
       faqs: JSON.stringify([
         { q: 'How are car rental charges calculated?', a: 'We provide both flat all-inclusive package rates (covering toll, parking, driver allowance) and transparent per-km billing based on your itinerary.' },
-        { q: 'Can I book a cab for Kolkata Airport drop at midnight?', a: 'Yes! Our 24x7 on-call dispatch ensures on-time airport and station pickup/drop at any hour.' }
+        { q: 'Can I book a cab for Kolkata Airport pickup from Bongaon at night?', a: 'Yes! 24x7 airport and railway station pickup/drop is available. Advance booking is recommended.' },
+        { q: 'Who arranges the driver’s food and accommodation on multi-day outstation trips?', a: 'For outstation trips, a standard daily driver allowance (Bhatta) is added to your bill to cover their food and stay. If you book an all-inclusive tour package with us, this allowance is already covered in the total cost.' },
+        { q: 'How far in advance should I book a vehicle?', a: 'While we do our best to accommodate last-minute requests, we recommend booking ideally 3 to 7 days in advance for standard cars, and even earlier for Tempo Travellers and Buses, especially during peak holiday seasons.' }
       ]),
       display_order: 2,
       is_active: 1
     },
     {
       service_id: 'SRV-003',
-      slug: 'hotel-booking',
-      title: 'Hotel & Homestay Bookings',
-      badge: 'Best Rates',
-      icon: 'Hotel',
-      short_tagline: 'Verified 3-Star, Luxury Resorts, Boutique Homestays & River Camps',
-      description: 'Handpicked and physically inspected accommodation across Darjeeling, Gangtok, Pelling, Dooars, Puri, Kashmir, and all major tourist destinations at guaranteed discounted partner tariffs.',
-      overview: 'Enjoy peaceful nights in clean, hygienic, and scenic accommodations. We negotiate directly with trusted hoteliers and boutique homestay owners to offer you comfortable stays with scenic mountain, forest, or sea views, hot water facilities, delicious Bengali & multi-cuisine meals, and authentic hospitality.',
-      hero_image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
-      lead_name: 'Dipankar Mitra (Co-Founder)',
-      lead_phone: '95633 95633',
-      lead_alt_phones: '79803 31022, 98303 54307',
+      slug: 'catering',
+      title: 'Catering Services',
+      badge: '23 Spice Lane Kitchen',
+      icon: 'Utensils',
+      short_tagline: 'Authentic Bengali, Tandoori, Mughlai & Indo-Chinese Catering',
+      description: 'Catering by 23 Spice Lane, Journey Architect’s kitchen, run by chefs with five-star hotel experience for celebrations, weddings, and tour groups.',
+      overview: 'Great food turns a good trip into an unforgettable one. Our catering is cooked at 23 Spice Lane, Journey Architect’s own kitchen, run by chefs with five-star hotel experience at Le Méridien Singapore, Hotel de l’Annapurna and Yak & Yeti in Kathmandu, Hotel Hindusthan International and Crystal Lounge in Kolkata, and Viceroy in Hyderabad.\n\nWe are known for authentic Bengali dishes, Tandoori, Mughlai and Indo-Chinese, made with fresh ingredients and strict hygiene.\n\nOur cook team can travel with your tour group, or cater your wedding, birthday or picnic. We handle events of 500 to 1,000 guests, bringing in additional staff selected to our own criteria for larger gatherings. Tell us your guest count and menu, and we will take care of the rest.',
+      hero_image: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1200&q=80',
+      lead_name: 'Sudipta Nandi & Dipankar Mitra',
+      lead_phone: '79803 31022',
+      lead_alt_phones: '95633 95633',
       key_features: JSON.stringify([
-        'Verified rooms with clean linens, geysers, TV, and mountain/sea views',
-        'Authentic local boutique homestays in Darjeeling, Kalimpong & North Sikkim',
-        'Forest bungalows & wildlife resort bookings in Dooars & Jaldapara',
-        'Sea-facing hotels and luxury resorts in Puri, Vizag, and Digha',
-        'Complimentary breakfast & customizable full-meal plans (Bengali food available)',
-        'Instant confirmed vouchers with flexible check-in support'
+        'Signature Cuisines: Authentic Bengali meals (Luchi-Alur Dom, Kosha Mangsho, Fish Curry, Basanti Pulao), along with Tandoori, Mughlai and Indo-Chinese dishes.',
+        'Our Own Kitchen: Every meal is cooked fresh at 23 Spice Lane, Journey Architect’s own kitchen, with strict hygiene standards.',
+        'Event Catering: Menus planned for weddings, rice ceremonies (Annaprasan), birthday parties, corporate meets and outdoor picnics.',
+        'Small to Large Gatherings: We cater for events from small family gatherings up to 500 to 1,000 guests.',
+        'Dietary Care: Separate pure vegetarian and Jain meals arranged on request.',
+        'Traveling Cook Team: Kitchen team and dedicated live cook service for large group expeditions and pilgrimages.'
       ]),
       offerings: JSON.stringify([
-        { title: 'Boutique Himalayan Homestays', desc: 'Warm hospitality, organic home-cooked meals, and breathtaking mountain valley views.' },
-        { title: 'Standard & Deluxe 3-Star Hotels', desc: 'Modern amenities, Wi-Fi, 24/7 room service, and prime central locations.' },
-        { title: 'Forest Resorts & Eco Camps', desc: 'Riverside stays, bonfire setups, and tranquil nature retreats in Dooars & Sundarbans.' },
-        { title: 'Beachfront Properties & Sea Resorts', desc: 'Direct beach access, swimming pools, and ocean-facing balconies in Puri & coastal hubs.' }
+        { title: 'Weddings & Celebrations', desc: 'Custom curated multi-course Bengali and multi-cuisine spreads with elegant buffet setups, live counter stations and trained service staff.' },
+        { title: 'Picnic & Day Outing Packages', desc: 'Breakfast, lunch and snack packages for winter picnics in Dooars, Bongaon and Parmadan Forest, riverside day trips and resort getaways, with food prepared fresh on site.' },
+        { title: 'Traveling Cook for Groups & Pilgrimages', desc: 'Dedicated chef and cook team accompanying your group to ensure hygienic, homely food throughout your journey.' },
+        { title: 'Corporate Events & Social Meets', desc: 'Customized lunch boxes, high-tea arrangements, conference buffets and formal sit-down dinners with attentive service.' }
       ]),
       faqs: JSON.stringify([
-        { q: 'Can I book only hotels without transport?', a: 'Yes! We offer standalone hotel and homestay bookings across all destinations at discounted agent tariffs.' },
-        { q: 'Is Bengali food available at the hotels?', a: 'Yes, we partner with properties that provide fresh, authentic Bengali meals on request.' }
+        { q: 'Can your cook team travel with our group on a tour?', a: 'Yes. For large family groups, pilgrimage groups and community tours, we can provide a live traveling kitchen team with complete cooking setups and fresh supplies.' },
+        { q: 'Do you arrange separate pure vegetarian or Jain food?', a: 'Yes. We prepare pure vegetarian and Jain meals in completely separate utensils with strict adherence to your dietary preferences.' },
+        { q: 'Can we taste the food before booking for a wedding or large event?', a: 'Yes, food tasting sessions can be arranged at 23 Spice Lane for confirmed event bookings upon request.' },
+        { q: 'What is the maximum number of guests you can cater for?', a: 'We cater for events from small family gatherings up to 500 to 1,000 guests.' },
+        { q: 'What areas do you cater in?', a: 'We cater across South and North 24 Parganas.' },
+        { q: 'How early should I book?', a: 'For events of 500 guests or more, please book at least 45 days before the event. For events with fewer than 500 guests, please book at least 30 days before.' },
+        { q: 'What are your payment and cancellation terms?', a: 'We take 50% of the total at the time of booking, and the full remaining payment 15 days before the event. Cancellations are not eligible for a refund.' }
       ]),
       display_order: 3,
       is_active: 1

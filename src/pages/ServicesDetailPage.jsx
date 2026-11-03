@@ -245,7 +245,7 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
 
               {/* Specific Offerings Grid */}
               <h4 style={{ fontSize: '1.35rem', color: 'var(--color-primary)', marginBottom: '1.25rem' }}>
-                Available Options & Packages
+                {activeService.offeringsTitle || 'Available Options & Packages'}
               </h4>
               <div className="service-offerings-grid">
                 {activeService.offerings.map((offering, idx) => {
@@ -397,10 +397,10 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                 }}
               >
                 <h3 style={{ fontSize: '1.35rem', color: 'var(--color-primary)', marginBottom: '0.4rem', lineHeight: 1.3 }}>
-                  Get in Touch with Team Journey Architect
+                  {activeService.leadContact?.cardTitle || 'Get in Touch with Team Journey Architect'}
                 </h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-                  Request a quote, check availability, or get friendly planning help for your next getaway.
+                  {activeService.leadContact?.cardSubtitle || (activeService.slug === 'catering' ? 'Request a quote, check availability, or get friendly planning help.' : 'Request a quote, check availability, or get friendly planning help for your next getaway.')}
                 </p>
 
                 {/* Direct Contact info */}
@@ -413,33 +413,71 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                     border: '1px solid var(--color-border-light)'
                   }}
                 >
+                  {activeService.leadContact?.role && (
+                    <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>
+                      {activeService.leadContact.role}
+                    </div>
+                  )}
                   <strong style={{ fontSize: '1.05rem', color: 'var(--color-primary)', display: 'block', marginBottom: '6px' }}>
                     {activeService.leadContact?.name || 'Sudipta Nandi (Founder)'}
                   </strong>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
-                    <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Call / WhatsApp:</span>{' '}
-                    <a
-                      href={getPhoneCallUrl(activeService.leadContact?.phone || '7980331022')}
-                      style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}
-                    >
-                      +91 {activeService.leadContact?.phone?.replace(/^\+?91\s*/, '')}
-                    </a>
-                    {activeService.leadContact?.alternatePhones && activeService.leadContact.alternatePhones.length > 0 && (
-                      <>
-                        {activeService.leadContact.alternatePhones.map((p, idx) => (
-                          <span key={idx}>
-                            {' · '}
-                            <a
-                              href={getPhoneCallUrl(p)}
-                              style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}
-                            >
-                              +91 {p.replace(/^\+?91\s*/, '')}
-                            </a>
-                          </span>
-                        ))}
-                      </>
-                    )}
-                  </div>
+                  
+                  {activeService.slug === 'catering' ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginTop: '6px' }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Direct No:</span>{' '}
+                        <a href="tel:+917980331022" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>79803 31022</a>
+                        {' / '}
+                        <a href="tel:+919830354307" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>98303 54307</a>
+                      </div>
+                      <div style={{ marginTop: '3px' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--color-text-muted)' }}>Alt:</span>{' '}
+                        <a href="tel:+918240112378" style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}>82401 12378</a>
+                        {' / '}
+                        <a href="tel:+919563395633" style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}>95633 95633</a>
+                      </div>
+                    </div>
+                  ) : activeService.slug === 'car-rental' ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-main)', lineHeight: 1.6, marginTop: '6px' }}>
+                      <div>
+                        <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>📞 Direct No:</span>{' '}
+                        <a href="tel:+917980331022" style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>79803 31022</a>
+                      </div>
+                      <div style={{ marginTop: '3px' }}>
+                        <span style={{ fontWeight: 600, color: 'var(--color-text-muted)' }}>📞 Alt No:</span>{' '}
+                        <a href="tel:+919830354307" style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}>98303 54307</a>
+                        {' / '}
+                        <a href="tel:+918240112378" style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}>82401 12378</a>
+                        {' / '}
+                        <a href="tel:+919563395633" style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}>95633 95633</a>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+                      <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Call / WhatsApp:</span>{' '}
+                      <a
+                        href={getPhoneCallUrl(activeService.leadContact?.phone || '7980331022')}
+                        style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}
+                      >
+                        +91 {activeService.leadContact?.phone?.replace(/^\+?91\s*/, '')}
+                      </a>
+                      {activeService.leadContact?.alternatePhones && activeService.leadContact.alternatePhones.length > 0 && (
+                        <>
+                          {activeService.leadContact.alternatePhones.map((p, idx) => (
+                            <span key={idx}>
+                              {' · '}
+                              <a
+                                href={getPhoneCallUrl(p)}
+                                style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}
+                              >
+                                +91 {p.replace(/^\+?91\s*/, '')}
+                              </a>
+                            </span>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Action Buttons: [WhatsApp Now] [Call Now] [Request a Quote] */}
@@ -499,10 +537,10 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
           {/* Dedicated Service Enquiry Section */}
           <div style={{ marginTop: '4.5rem', paddingTop: '3.5rem', borderTop: '2px dashed var(--color-border)' }} id="enquiry-form-section">
             <SectionHeading
-              eyebrow={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Live Catering Booking" : (activeService.slug === 'car-rental' ? "Commercial Fleet Booking" : "Customized Holiday Planning")}
+              eyebrow={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Live Catering Booking" : (activeService.slug === 'car-rental' ? "Fleet Booking" : "Customized Holiday Planning")}
               eyebrowVariant="amber"
-              title={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Book / Enquire About Catering Services" : (activeService.slug === 'car-rental' ? "Request Commercial Car Rental & Cab" : "Plan Your Journey")}
-              subtitle={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Fill in your celebration date, guest count, and menu style for direct consultation with Executive Chef Dipankar Mitra." : (activeService.slug === 'car-rental' ? "Enter your travel dates, route, and preferred car type for guaranteed availability and verified transparent tariff." : "Talk to our team for personalized sightseeing itineraries and carefully chosen, verified stays.")}
+              title={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Book / Enquire About Catering Services" : (activeService.slug === 'car-rental' ? "Request a Car Rental or Cab" : "Plan Your Journey")}
+              subtitle={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Fill in your celebration date, guest count, and menu style for direct consultation with Executive Chef Dipankar Mitra." : (activeService.slug === 'car-rental' ? "Enter your travel dates, route, and preferred car type to get confirmed availability and a clear, transparent tariff." : "Talk to our team for personalized sightseeing itineraries and carefully chosen, verified stays.")}
             />
 
             <div style={{ maxWidth: '960px', margin: '2.5rem auto 0 auto' }}>

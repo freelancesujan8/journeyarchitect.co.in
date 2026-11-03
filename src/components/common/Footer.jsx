@@ -199,7 +199,7 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
             <Logo light={true} size="footer" />
 
             <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.875rem', lineHeight: 1.6, margin: '0 0 0.5rem 0' }}>
-              Your dedicated tour operator based at Elgin 1, New Batanagar Road, Maheshtala, Batanagar. We craft personalized holiday packages, reliable itineraries, and comfortable travel experiences with genuine care.
+              Your dedicated travel partner based in Kolkata. We craft personalized holiday packages, relaxing ‘Slow Travel’ itineraries, and comfortable journeys with genuine care.
             </p>
 
             {/* Social Media Links with Icons */}
@@ -438,7 +438,7 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
                   onClick={(e) => handleNavClick(e, '/services/tour-and-travel')}
                   style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.875rem', textDecoration: 'none' }}
                 >
-                  🏔️ Tour and travel
+                  🏔️ Tour & Travel Packages
                 </a>
               </li>
               <li>
@@ -456,7 +456,7 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
                   onClick={(e) => handleNavClick(e, '/services/car-rental')}
                   style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.875rem', textDecoration: 'none' }}
                 >
-                  🚗 Car Rental
+                  🚗 Premium Car Rental
                 </a>
               </li>
               {popularTours.slice(0, 3).map((item, idx) => (
@@ -520,14 +520,14 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
                   <MapPin size={14} color="var(--color-accent)" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <span style={{ color: 'var(--color-accent)', fontWeight: 700, display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Head Office:</span>
-                    <span>Elgin 1, Batanagar, Kolkata - 700140</span>
+                    <span>Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata - 700140</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                   <MapPin size={14} color="#2AD5DC" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <span style={{ color: '#2AD5DC', fontWeight: 700, display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Branch Office:</span>
-                    <span>P-23, Michael nagar , Kolkata - 700 133</span>
+                    <span>P-23, Michael Nagar, Kolkata - 700133</span>
                   </div>
                 </div>
               </div>

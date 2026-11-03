@@ -22,7 +22,8 @@ export const BUSINESS_CONFIG = {
     role: "Founder & Tour Director",
     phones: ["79803 31022", "98303 54307", "82401 12378"],
     primaryPhone: "79803 31022",
-    whatsapp: "79803 31022"
+    whatsapp: "79803 31022",
+    quote: "We don't just plan holidays; we craft seamless experiences where comfort, care, and nature come together."
   },
   coFounder: {
     name: "Dipankar Mitra",
@@ -33,7 +34,11 @@ export const BUSINESS_CONFIG = {
   },
   executive: {
     name: "Soham Chowdhury",
-    role: "Sales & Business Development Executive"
+    role: "Sales & Marketing Executive",
+    phones: ["62892 91984"],
+    primaryPhone: "62892 91984",
+    phone: "+91 62892 91984",
+    quote: "Every great journey starts with a simple conversation—I am here to perfectly match your travel dreams with our curated experiences."
   },
 
   // Official Legal Registrations
@@ -42,12 +47,12 @@ export const BUSINESS_CONFIG = {
   isMsmeRegistered: true,
   
   // Location details
-  headOfficeAddress: "Tower 02, Flat No - 6B3, Elgin 1, New Batanagar Road, Maheshtala, Batanagar, West Bengal, India, 700140",
-  branchOfficeAddress: "P-23, Michael nagar , Kolkata - 700 133",
-  address: "Tower 02, Flat No - 6B3, Elgin 1, New Batanagar Road, Maheshtala, Batanagar, West Bengal, India, 700140",
-  branchAddress: "P-23, Michael nagar , Kolkata - 700 133",
-  city: "Maheshtala, Batanagar",
-  branchCity: "Michael nagar, Kolkata",
+  headOfficeAddress: "Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal - 700140",
+  branchOfficeAddress: "P-23, Michael Nagar, Kolkata - 700133",
+  address: "Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal - 700140",
+  branchAddress: "P-23, Michael Nagar, Kolkata - 700133",
+  city: "Maheshtala, Batanagar, Kolkata",
+  branchCity: "Michael Nagar, Kolkata",
   district: "South 24 Parganas",
   state: "West Bengal",
   country: "India",
@@ -60,7 +65,8 @@ export const BUSINESS_CONFIG = {
     { label: "Founder (Sudipta Nandi)", number: "79803 31022", tel: "+917980331022" },
     { label: "Founder Alternate", number: "98303 54307", tel: "+919830354307" },
     { label: "Founder Alternate", number: "82401 12378", tel: "+918240112378" },
-    { label: "Co-Founder (Dipankar Mitra)", number: "95633 95633", tel: "+919563395633" }
+    { label: "Co-Founder (Dipankar Mitra)", number: "95633 95633", tel: "+919563395633" },
+    { label: "Sales & Marketing (Soham Chowdhury)", number: "62892 91984", tel: "+916289291984" }
   ],
   whatsapp: "+91 79803 31022",
   whatsappRaw: "917980331022",
