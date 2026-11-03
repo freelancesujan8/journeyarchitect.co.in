@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Compass, Car, Utensils, Check, Phone, MessageCircle, 
-  Sparkles, ShieldCheck, MapPin, ArrowRight, ChevronRight, 
+  Sparkles, ShieldCheck, MapPin, ArrowRight, ChevronRight, ChevronDown,
   HelpCircle, Calendar, Users, Star, Award, Clock
 } from 'lucide-react';
 import { SEOHead } from '../components/common/SEOHead';
@@ -28,12 +28,17 @@ const normalizeServiceSlug = (slug) => {
 
 export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onOpenTripPlanner, navigate }) {
   const [activeSlug, setActiveSlug] = useState(() => normalizeServiceSlug(initialServiceSlug));
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   useEffect(() => {
     if (initialServiceSlug) {
       setActiveSlug(normalizeServiceSlug(initialServiceSlug));
     }
   }, [initialServiceSlug]);
+
+  const toggleFaq = (idx) => {
+    setOpenFaqIndex(prev => prev === idx ? null : idx);
+  };
 
   const activeService = CORE_SERVICES.find(s => s.slug === activeSlug) || CORE_SERVICES[0];
   const IconComponent = ICONS_MAP[activeService.icon] || Compass;
@@ -278,22 +283,85 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                   border: '1px solid var(--color-border)'
                 }}
               >
-                <h4 style={{ fontSize: '1.2rem', color: 'var(--color-primary)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <HelpCircle size={20} color="var(--color-secondary)" />
-                  <span>Frequently Asked Questions</span>
-                </h4>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '8px' }}>
+                  <h4 style={{ fontSize: '1.25rem', color: 'var(--color-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <HelpCircle size={20} color="var(--color-secondary)" />
+                    <span>Frequently Asked Questions</span>
+                  </h4>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                    {activeService.faqs.length} Q&A
+                  </span>
+                </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  {activeService.faqs.map((faq, idx) => (
-                    <div key={idx} style={{ borderBottom: idx !== activeService.faqs.length - 1 ? '1px solid var(--color-border-light)' : 'none', paddingBottom: idx !== activeService.faqs.length - 1 ? '1rem' : 0 }}>
-                      <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)', display: 'block', marginBottom: '4px' }}>
-                        {faq.q}
-                      </strong>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.55 }}>
-                        {faq.a}
-                      </p>
-                    </div>
-                  ))}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {activeService.faqs.map((faq, idx) => {
+                    const isOpen = openFaqIndex === idx;
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          border: '1px solid var(--color-border-light)',
+                          borderRadius: '10px',
+                          overflow: 'hidden',
+                          backgroundColor: isOpen ? 'var(--color-bg)' : '#FFFFFF',
+                          transition: 'background-color 0.2s ease, border-color 0.2s ease'
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleFaq(idx)}
+                          style={{
+                            width: '100%',
+                            padding: '1rem 1.15rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            textAlign: 'left'
+                          }}
+                        >
+                          <strong style={{ fontSize: '0.95rem', color: isOpen ? 'var(--color-secondary)' : 'var(--color-primary)', lineHeight: 1.4 }}>
+                            {faq.q}
+                          </strong>
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              backgroundColor: isOpen ? 'var(--color-secondary)' : 'var(--color-bg)',
+                              color: isOpen ? '#FFFFFF' : 'var(--color-primary)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.25s ease, background-color 0.2s ease, color 0.2s ease'
+                            }}
+                          >
+                            <ChevronDown size={14} />
+                          </div>
+                        </button>
+
+                        {isOpen && (
+                          <div
+                            style={{
+                              padding: '0 1.15rem 1rem 1.15rem',
+                              color: 'var(--color-text-secondary)',
+                              fontSize: '0.875rem',
+                              lineHeight: 1.6,
+                              whiteSpace: 'pre-line',
+                              borderTop: '1px solid var(--color-border-light)'
+                            }}
+                          >
+                            <p style={{ margin: '0.5rem 0 0 0' }}>{faq.a}</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

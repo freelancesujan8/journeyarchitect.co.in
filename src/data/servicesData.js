@@ -49,11 +49,55 @@ export const CORE_SERVICES = [
     faqs: [
       {
         q: "How can I book a customized tour package?",
-        a: "You can click 'Plan My Trip' or call us at 79803 31022. We discuss your preferred dates, group size, and budget to prepare a tailored itinerary."
+        a: "Click “Plan My Trip” or call us at 79803 31022. We discuss your preferred dates, group size and budget, then prepare a tailored itinerary for you."
+      },
+      {
+        q: "How do I pay, and how much advance is needed?",
+        a: "We take 50% at the time of booking, 25% 30 days before your trip starts, and the final 25% 5 days before your trip starts. You can pay by UPI, bank transfer or cash."
+      },
+      {
+        q: "What is your cancellation and refund policy?",
+        a: "Refunds are calculated on the amount you have paid.\n\nCancel 60 days or more before the trip starts: 50% of the amount paid is refunded.\nCancel 30 days or more before the trip starts: 25% of the amount paid is refunded.\nCancel after that: no refund, and no adjustment against a future trip.\n\nThe exact terms are shared with your itinerary before you confirm."
+      },
+      {
+        q: "Are there any hidden charges in your tour packages?",
+        a: "Not at all. We believe in honest, transparent pricing. Every inclusion and exclusion is clearly stated in your itinerary before you confirm your booking."
       },
       {
         q: "Are stays and meals included in the packages?",
-        a: "Yes! We offer both CP (Breakfast only) and MAP/AP (Breakfast + Lunch/Dinner) plans as per your preference."
+        a: "Yes. You can choose the meal plan that suits you:\n\nCP: breakfast only\nMAP: breakfast plus one main meal (lunch or dinner)\nAP: breakfast, lunch and dinner"
+      },
+      {
+        q: "What about lunch during full-day sightseeing tours?",
+        a: "To ensure food hygiene, prevent wastage and give you the freedom to explore authentic local cuisine, we usually keep lunch open during full-day sightseeing."
+      },
+      {
+        q: "Do you have special arrangements for senior citizens or women travellers?",
+        a: "Yes. We plan safe, relaxed and comfortable journeys for senior citizens, solo travellers, families and all-women groups, with 24/7 on-ground support."
+      },
+      {
+        q: "I am travelling alone. Can I still join a trip?",
+        a: "Yes. We plan solo trips with the same care as group tours."
+      },
+      {
+        q: "Can I travel with children?",
+        a: "Yes. We plan family trips at a relaxed pace, so children and parents can both enjoy the journey. Child rates are based on the package price per adult:\n\nBelow 3 years: free\n3 to under 5 years: 25%\n5 to under 8 years: 75%\n8 years and above: full price"
+      },
+      {
+        q: "Can you arrange vegetarian or special meals?",
+        a: "Yes. Please tell us your food preferences when you book, and we will arrange vegetarian, Jain or other meals wherever possible."
+      },
+      {
+        q: "Do you assist with train or flight ticket bookings?",
+        a: "Yes. We book train and flight tickets for you, and help with permits for restricted areas."
+      },
+      {
+        q: "What if the weather changes our plan?",
+        a: "In the hills, landslides or heavy rain can sometimes affect routes. Our on-ground team will suggest the safest alternative so that your trip continues smoothly."
+      },
+      {
+        q: "What documents do I need to carry?",
+        a: "A valid photo ID for every traveller. For restricted areas such as North Sikkim, we will tell you which documents are needed for permits at the time of booking."
       }
     ]
   },
