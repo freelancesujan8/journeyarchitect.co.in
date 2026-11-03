@@ -350,18 +350,14 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                   border: '2px solid var(--color-secondary-subtle)'
                 }}
               >
-                <span className="eyebrow eyebrow-teal" style={{ marginBottom: '0.5rem' }}>
-                  Direct Lead Contact
-                </span>
-
-                <h3 style={{ fontSize: '1.4rem', color: 'var(--color-primary)', marginBottom: '0.25rem' }}>
-                  Connect with Team Journey Architect
+                <h3 style={{ fontSize: '1.35rem', color: 'var(--color-primary)', marginBottom: '0.4rem', lineHeight: 1.3 }}>
+                  Get in Touch with Team Journey Architect
                 </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-                  Get instantaneous quotation, availability check, and expert planning advice.
+                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                  Request a quote, check availability, or get friendly planning help for your next getaway.
                 </p>
 
-                {/* Lead Contact info */}
+                {/* Direct Contact info */}
                 <div
                   style={{
                     backgroundColor: 'var(--color-bg)',
@@ -371,25 +367,57 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                     border: '1px solid var(--color-border-light)'
                   }}
                 >
-                  <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>
-                    Service Coordinator
-                  </div>
-                  <strong style={{ fontSize: '1.1rem', color: 'var(--color-primary)', display: 'block' }}>
-                    {activeService.leadContact.name}
+                  <strong style={{ fontSize: '1.05rem', color: 'var(--color-primary)', display: 'block', marginBottom: '6px' }}>
+                    {activeService.leadContact?.name || 'Sudipta Nandi (Founder)'}
                   </strong>
-                  <div style={{ fontSize: '0.95rem', color: 'var(--color-secondary)', fontWeight: 700, marginTop: '2px' }}>
-                    Direct No: {activeService.leadContact.phone}
+                  <div style={{ fontSize: '0.875rem', color: 'var(--color-text-main)', lineHeight: 1.6 }}>
+                    <span style={{ fontWeight: 600, color: 'var(--color-secondary)' }}>Call / WhatsApp:</span>{' '}
+                    <a
+                      href={getPhoneCallUrl(activeService.leadContact?.phone || '7980331022')}
+                      style={{ color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}
+                    >
+                      +91 {activeService.leadContact?.phone?.replace(/^\+?91\s*/, '')}
+                    </a>
+                    {activeService.leadContact?.alternatePhones && activeService.leadContact.alternatePhones.length > 0 && (
+                      <>
+                        {activeService.leadContact.alternatePhones.map((p, idx) => (
+                          <span key={idx}>
+                            {' · '}
+                            <a
+                              href={getPhoneCallUrl(p)}
+                              style={{ color: 'var(--color-text-main)', textDecoration: 'none' }}
+                            >
+                              +91 {p.replace(/^\+?91\s*/, '')}
+                            </a>
+                          </span>
+                        ))}
+                      </>
+                    )}
                   </div>
-
-                  {activeService.leadContact.alternatePhones && (
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                      Alt: {activeService.leadContact.alternatePhones.join(' / ')}
-                    </div>
-                  )}
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons: [WhatsApp Now] [Call Now] [Request a Quote] */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <Button
+                      variant="whatsapp"
+                      href={getWhatsAppUrl(`Hello Journey Architect, I want to enquire about ${activeService.title}.`, activeService.leadContact.phone)}
+                      target="_blank"
+                      icon={<MessageCircle size={16} />}
+                      style={{ justifyContent: 'center' }}
+                    >
+                      WhatsApp Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      href={getPhoneCallUrl(activeService.leadContact.phone)}
+                      icon={<Phone size={16} />}
+                      style={{ justifyContent: 'center' }}
+                    >
+                      Call Now
+                    </Button>
+                  </div>
+
                   <Button
                     variant="primary"
                     size="lg"
@@ -402,34 +430,16 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                       }
                     }}
                     icon={<Sparkles size={16} />}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', justifyContent: 'center' }}
                   >
-                    Request Instant Quotation
+                    Request a Quote
                   </Button>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <Button
-                      variant="whatsapp"
-                      href={getWhatsAppUrl(`Hello Journey Architect, I want to enquire about ${activeService.title}.`, activeService.leadContact.phone)}
-                      target="_blank"
-                      icon={<MessageCircle size={16} />}
-                    >
-                      WhatsApp
-                    </Button>
-                    <Button
-                      variant="outline"
-                      href={getPhoneCallUrl(activeService.leadContact.phone)}
-                      icon={<Phone size={16} />}
-                    >
-                      Call Now
-                    </Button>
-                  </div>
                 </div>
 
                 {/* Office Note */}
-                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border-light)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                  <MapPin size={15} color="var(--color-secondary)" />
-                  <span>Office: Elgin 1, New Batanagar Road, Maheshtala, Batanagar</span>
+                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border-light)', display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.45 }}>
+                  <MapPin size={16} color="var(--color-secondary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span><strong>Office:</strong> Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal 700140</span>
                 </div>
               </div>
             </div>
