@@ -383,32 +383,6 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                   alt={activeService.title}
                   style={{ width: '100%', height: '320px', objectFit: 'cover', display: 'block' }}
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '16px',
-                    left: '16px',
-                    right: '16px',
-                    backgroundColor: 'rgba(18, 48, 74, 0.92)',
-                    backdropFilter: 'blur(8px)',
-                    color: '#FFFFFF',
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-md)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
-                >
-                  <div>
-                    <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--color-accent)', fontWeight: 700 }}>
-                      Verified Service
-                    </span>
-                    <strong style={{ fontSize: '0.925rem', display: 'block' }}>
-                      Govt. UDYAM & Trade Licensed
-                    </strong>
-                  </div>
-                  <ShieldCheck size={24} color="#25D366" />
-                </div>
               </div>
 
               {/* Direct Booking & Team Contact Card */}
