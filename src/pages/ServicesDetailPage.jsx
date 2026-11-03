@@ -527,8 +527,8 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
             <SectionHeading
               eyebrow={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Live Catering Booking" : (activeService.slug === 'car-rental' ? "Commercial Fleet Booking" : "Customized Holiday Planning")}
               eyebrowVariant="amber"
-              title={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Book / Enquire About Catering Services" : (activeService.slug === 'car-rental' ? "Request Commercial Car Rental & Cab" : "Plan Your Tour Package")}
-              subtitle={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Fill in your celebration date, guest count, and menu style for direct consultation with Executive Chef Dipankar Mitra." : (activeService.slug === 'car-rental' ? "Enter your travel dates, route, and preferred car type for guaranteed availability and verified transparent tariff." : "Connect with our founders for personalized sightseeing itineraries and verified hotel accommodations.")}
+              title={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Book / Enquire About Catering Services" : (activeService.slug === 'car-rental' ? "Request Commercial Car Rental & Cab" : "Plan Your Journey")}
+              subtitle={(activeService.slug === 'catering' || activeService.slug === 'catering-services') ? "Fill in your celebration date, guest count, and menu style for direct consultation with Executive Chef Dipankar Mitra." : (activeService.slug === 'car-rental' ? "Enter your travel dates, route, and preferred car type for guaranteed availability and verified transparent tariff." : "Talk to our team for personalized sightseeing itineraries and carefully chosen, verified stays.")}
             />
 
             <div style={{ maxWidth: '960px', margin: '2.5rem auto 0 auto' }}>
@@ -540,10 +540,10 @@ export function ServicesDetailPage({ initialServiceSlug = 'tour-and-travel', onO
                     <Sparkles size={28} />
                   </div>
                   <h3 style={{ fontSize: '1.6rem', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-                    Personalized Holiday & Tour Itineraries
+                    Itineraries Made Around You
                   </h3>
                   <p style={{ color: 'var(--color-text-secondary)', maxWidth: '540px', margin: '0 auto 1.75rem', lineHeight: 1.6, fontSize: '1rem' }}>
-                    Browse our curated weekly and long-distance tour packages, or let our founder Sudipta tailor a unique journey designed around your family or group.
+                    Browse our weekend escapes and longer holiday packages, or let our founder, Sudipta, plan an unhurried journey around your family or group.
                   </p>
                   <div style={{ display: 'inline-flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
                     <Button
