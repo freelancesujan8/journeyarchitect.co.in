@@ -403,18 +403,18 @@ export default function AdminDashboardPage({ onNavigate }) {
       founder_phone_alt: "98303 54307, 82401 12378",
       cofounder_name: "Dipankar Mitra",
       cofounder_phone: "95633 95633",
-      travel_partner_name: "",
-      travel_partner_phone: "",
+      travel_partner_name: "Soham Chowdhury",
+      travel_partner_phone: "62892 91984",
       whatsapp_number: "917980331022",
       whatsapp_message: "Hello Journey Architect, I would like to plan a tour / enquiry.",
       email_primary: "sudiptajourneys@gmail.com",
       email_support: "contact@journeyarchitect.in",
-      address_street: "Tower 02, Flat No - 6B3, Elgin 1, New Batanagar Road",
+      address_street: "Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road",
       address_city: "Maheshtala, Batanagar",
       address_state: "West Bengal",
       address_pincode: "700140",
-      address_full: "Tower 02, Flat No - 6B3, Elgin 1, New Batanagar Road, Maheshtala, Batanagar, West Bengal, India, 700140",
-      branch_address: "P-23, Michael nagar , Kolkata - 700 133",
+      address_full: "Elgin, Tower 2, Flat 6B3, 1 New Batanagar Road, Maheshtala, Batanagar, Kolkata, West Bengal - 700140",
+      branch_address: "P-23, Michael Nagar, Kolkata - 700133",
       google_map_embed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.8521039864223!2d88.225574!3d22.496587!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02796075908b9b%3A0x6b09312521c379a!2sBatanagar%2C%20Maheshtala%2C%20West%20Bengal%20700140!5e0!3m2!1sen!2sin!4v1700000000000",
       trade_license_no: "0917P299826472603",
       udyam_registration_no: "UDYAM-WB-18-0199709",
@@ -2452,18 +2452,20 @@ export default function AdminDashboardPage({ onNavigate }) {
                   </div>
 
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Travel & Transport Partner Name</label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Sales & Marketing / Partner Name</label>
                     <input
                       type="text"
+                      placeholder="e.g. Soham Chowdhury"
                       value={contactForm.travel_partner_name || ''}
                       onChange={(e) => setContactForm({ ...contactForm, travel_partner_name: e.target.value })}
                       style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Travel Partner Phone</label>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Sales & Marketing Phone</label>
                     <input
                       type="text"
+                      placeholder="e.g. 62892 91984"
                       value={contactForm.travel_partner_phone || ''}
                       onChange={(e) => setContactForm({ ...contactForm, travel_partner_phone: e.target.value })}
                       style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
