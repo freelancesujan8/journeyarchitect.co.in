@@ -182,8 +182,23 @@ function MediaUploadField({
 }
 
 export default function AdminDashboardPage({ onNavigate }) {
-  const [token, setToken] = useState(sessionStorage.getItem('journeyarchitect_admin_token') || '');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [token, setToken] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlToken = params.get('token');
+      if (urlToken) return urlToken;
+      return sessionStorage.getItem('journeyarchitect_admin_token') || '';
+    }
+    return '';
+  });
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlTab = params.get('tab');
+      if (urlTab) return urlTab;
+    }
+    return 'overview';
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [calendarSummary, setCalendarSummary] = useState(null);
 
