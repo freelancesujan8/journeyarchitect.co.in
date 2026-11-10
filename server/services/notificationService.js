@@ -2,32 +2,48 @@ import nodemailer from 'nodemailer';
 import { db } from '../db/database.js';
 
 export const DEFAULT_NOTIFICATION_SETTINGS = {
-  booking_notification_email: 'sudiptajourneys@gmail.com',
+  booking_notification_email: process.env.BOOKING_NOTIFICATION_EMAIL || process.env.SMTP_USER || 'contact@journeyarchitect.co.in',
   enable_email_notifications: 1,
-  admin_notification_phone: '79803 31022',
-  smtp_host: 'smtp.gmail.com',
-  smtp_port: 587,
-  smtp_secure: 0,
-  smtp_user: 'sudiptajourneys@gmail.com',
-  smtp_pass: 'Himachal_@puchu_2490#6682',
-  from_name: 'Journey Architect Bookings',
-  from_email: 'sudiptajourneys@gmail.com'
+  admin_notification_phone: process.env.ADMIN_PHONE || '79803 31022',
+  smtp_host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+  smtp_port: parseInt(process.env.SMTP_PORT, 10) || 465,
+  smtp_secure: process.env.SMTP_SECURE === '1' || process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465' ? 1 : 0,
+  smtp_user: process.env.SMTP_USER || '',
+  smtp_pass: process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '',
+  from_name: process.env.FROM_NAME || 'Journey Architect Bookings',
+  from_email: process.env.FROM_EMAIL || process.env.SMTP_USER || 'contact@journeyarchitect.co.in'
 };
 
 /**
- * Helper to fetch active notification settings from SQLite
+ * Helper to fetch active notification settings from SQLite and environment variables
  */
 export function getNotificationSettings() {
+  let settings = { ...DEFAULT_NOTIFICATION_SETTINGS };
   try {
     const row = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'notification_settings'").get();
     if (row && row.setting_value) {
       const parsed = JSON.parse(row.setting_value);
-      return { ...DEFAULT_NOTIFICATION_SETTINGS, ...parsed };
+      settings = { ...settings, ...parsed };
     }
   } catch (err) {
     console.error('[NotificationService] Error reading settings from DB:', err.message);
   }
-  return { ...DEFAULT_NOTIFICATION_SETTINGS };
+
+  // Ensure environment variables override DB settings if provided
+  if (process.env.SMTP_HOST) settings.smtp_host = process.env.SMTP_HOST;
+  if (process.env.SMTP_PORT) settings.smtp_port = parseInt(process.env.SMTP_PORT, 10);
+  if (process.env.SMTP_USER) settings.smtp_user = process.env.SMTP_USER;
+  if (process.env.SMTP_PASS || process.env.SMTP_PASSWORD) settings.smtp_pass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
+  if (process.env.SMTP_SECURE !== undefined) {
+    settings.smtp_secure = (process.env.SMTP_SECURE === '1' || process.env.SMTP_SECURE === 'true') ? 1 : 0;
+  } else if (settings.smtp_port === 465) {
+    settings.smtp_secure = 1;
+  }
+  if (process.env.BOOKING_NOTIFICATION_EMAIL) settings.booking_notification_email = process.env.BOOKING_NOTIFICATION_EMAIL;
+  if (process.env.FROM_NAME) settings.from_name = process.env.FROM_NAME;
+  if (process.env.FROM_EMAIL) settings.from_email = process.env.FROM_EMAIL;
+
+  return settings;
 }
 
 /**

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import { initDatabase } from './db/database.js';
 import { packagesRouter } from './routes/packages.js';
 import { bookingsRouter } from './routes/bookings.js';
@@ -30,12 +31,18 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
+app.use(compression());
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Serve uploaded assets statically
-app.use('/uploads', express.static(uploadsDir));
+// Serve uploaded assets statically with caching
+app.use('/uploads', express.static(uploadsDir, {
+  maxAge: '1d',
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+  }
+}));
 
 // Initialize SQLite Schema & Seed Data
 initDatabase();
@@ -70,10 +77,26 @@ const distPath = possibleDistPaths.find(p => fs.existsSync(path.join(p, 'index.h
 console.log(`[Journey Architect] Frontend dist path: ${distPath} (exists: ${fs.existsSync(distPath)})`);
 
 if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  // Express 5 compatible SPA fallback
+  // 1. Long-lived immutable cache for fingerprinted frontend assets
+  app.use('/assets', express.static(path.join(distPath, 'assets'), {
+    maxAge: '1y',
+    immutable: true
+  }));
+
+  // 2. Short cache for root static files (favicon, manifest, etc.)
+  app.use(express.static(distPath, {
+    maxAge: '1h',
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+      }
+    }
+  }));
+
+  // 3. Express 5 compatible SPA fallback with no-cache for index.html
   app.use((req, res, next) => {
     if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
       return res.sendFile(path.join(distPath, 'index.html'));
     }
     next();

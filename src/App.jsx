@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Header } from './components/common/Header';
 import { AnnouncementBar } from './components/common/AnnouncementBar';
 import { Footer } from './components/common/Footer';
@@ -7,24 +7,39 @@ import { WhatsAppFloating } from './components/common/WhatsAppFloating';
 import { PlanMyTripModal } from './components/forms/PlanMyTripModal';
 import { LegalModal } from './components/legal/LegalModal';
 
-// Existing Pages
+// Homepage is loaded eagerly for instant First Contentful Paint (FCP)
 import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { ToursPage } from './pages/ToursPage';
-import { CustomizedToursPage } from './pages/CustomizedToursPage';
-import { ServicesDetailPage } from './pages/ServicesDetailPage';
-import { GalleryPage } from './pages/GalleryPage';
-import { ReviewsPage } from './pages/ReviewsPage';
-import { FAQPage } from './pages/FAQPage';
-import { ContactPage } from './pages/ContactPage';
-import { BlogPage } from './pages/BlogPage';
 
-// Booking & Admin Pages
-import PackageDetailPage from './pages/PackageDetailPage';
-import BookingCheckoutPage from './pages/BookingCheckoutPage';
-import BookingSuccessPage from './pages/BookingSuccessPage';
-import BookingLookupPage from './pages/BookingLookupPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
+// Subpages and Admin portals are lazy-loaded on demand to keep initial bundle tiny
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ToursPage = lazy(() => import('./pages/ToursPage').then(m => ({ default: m.ToursPage })));
+const CustomizedToursPage = lazy(() => import('./pages/CustomizedToursPage').then(m => ({ default: m.CustomizedToursPage })));
+const ServicesDetailPage = lazy(() => import('./pages/ServicesDetailPage').then(m => ({ default: m.ServicesDetailPage })));
+const GalleryPage = lazy(() => import('./pages/GalleryPage').then(m => ({ default: m.GalleryPage })));
+const ReviewsPage = lazy(() => import('./pages/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
+const FAQPage = lazy(() => import('./pages/FAQPage').then(m => ({ default: m.FAQPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const BlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.BlogPage })));
+
+// Heavy Booking & Admin Portals
+const PackageDetailPage = lazy(() => import('./pages/PackageDetailPage'));
+const BookingCheckoutPage = lazy(() => import('./pages/BookingCheckoutPage'));
+const BookingSuccessPage = lazy(() => import('./pages/BookingSuccessPage'));
+const BookingLookupPage = lazy(() => import('./pages/BookingLookupPage'));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage'));
+
+const PageLoadingSpinner = () => (
+  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{
+      width: '40px',
+      height: '40px',
+      border: '4px solid #E5E7EB',
+      borderTopColor: '#C48B28',
+      borderRadius: '50%',
+      animation: 'spin 0.8s linear infinite'
+    }} />
+  </div>
+);
 
 export function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname || '/');
@@ -169,7 +184,9 @@ export function App() {
 
       {/* Main Page Content */}
       <main id="main-content" className="main-content">
-        {renderCurrentPage()}
+        <Suspense fallback={<PageLoadingSpinner />}>
+          {renderCurrentPage()}
+        </Suspense>
       </main>
 
       {/* Footer (Hidden on Admin) */}
