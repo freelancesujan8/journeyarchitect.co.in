@@ -7,8 +7,8 @@ import { DESTINATIONS_DATA, DESTINATION_CATEGORIES } from '../data/destinationsD
 
 export function ToursPage({ onOpenTripPlanner, navigate }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [packages, setPackages] = useState(DESTINATIONS_DATA);
-  const [loading, setLoading] = useState(false);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -20,19 +20,13 @@ export function ToursPage({ onOpenTripPlanner, navigate }) {
           if (res && res.success && Array.isArray(res.packages)) {
             setPackages(res.packages);
           } else {
-            const filtered = DESTINATIONS_DATA.filter((pkg) =>
-              selectedCategory === 'all' ? true : (pkg.tour_category === selectedCategory || pkg.category === selectedCategory)
-            );
-            setPackages(filtered);
+            setPackages([]);
           }
         }
       } catch (err) {
-        console.warn('ToursPage: Error loading packages from API, using fallback:', err);
+        console.warn('ToursPage: Error loading packages from API:', err);
         if (isMounted) {
-          const filtered = DESTINATIONS_DATA.filter((pkg) =>
-            selectedCategory === 'all' ? true : (pkg.tour_category === selectedCategory || pkg.category === selectedCategory)
-          );
-          setPackages(filtered);
+          setPackages([]);
         }
       } finally {
         if (isMounted) {
@@ -121,6 +115,24 @@ export function ToursPage({ onOpenTripPlanner, navigate }) {
             <div style={{ textAlign: 'center', padding: '60px 0' }}>
               <div className="spinner" style={{ width: '40px', height: '40px', margin: '0 auto 16px', borderColor: 'var(--color-teal)', borderTopColor: 'transparent' }} />
               <p style={{ color: 'var(--color-text-muted)' }}>Loading verified tour packages from database...</p>
+            </div>
+          ) : packages.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', maxWidth: '600px', margin: '0 auto' }}>
+              <Compass size={48} color="var(--color-secondary)" style={{ margin: '0 auto 16px' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '8px' }}>
+                No packages in this category yet
+              </h3>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
+                We are curating exciting new itineraries! Contact us to create a customized holiday package tailored just for you.
+              </p>
+              <Button
+                variant="secondary"
+                size="medium"
+                icon={<Sparkles size={16} />}
+                onClick={() => onOpenTripPlanner('holiday')}
+              >
+                Plan a Custom Holiday
+              </Button>
             </div>
           ) : (
             <div className="grid-2" style={{ gap: '2.5rem' }}>

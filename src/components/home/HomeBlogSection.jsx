@@ -7,7 +7,8 @@ import { BLOG_POSTS } from '../../data/blogData';
 import { getWhatsAppUrl } from '../../config/businessConfig';
 
 export function HomeBlogSection({ navigate, onOpenTripPlanner }) {
-  const [blogs, setBlogs] = useState(BLOG_POSTS.slice(0, 3));
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeArticle, setActiveArticle] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -16,12 +17,18 @@ export function HomeBlogSection({ navigate, onOpenTripPlanner }) {
     let isMounted = true;
     async function loadLatestBlogs() {
       try {
+        setLoading(true);
         const res = await ApiClient.getBlogs(undefined, undefined, 3);
-        if (isMounted && res && res.blogs && res.blogs.length > 0) {
+        if (isMounted && res && res.blogs) {
           setBlogs(res.blogs.slice(0, 3));
+        } else if (isMounted) {
+          setBlogs([]);
         }
       } catch (err) {
-        console.warn('HomeBlogSection: Using fallback blog data:', err);
+        console.warn('HomeBlogSection: Error loading blogs from DB:', err);
+        if (isMounted) setBlogs([]);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     }
     loadLatestBlogs();
@@ -64,6 +71,10 @@ export function HomeBlogSection({ navigate, onOpenTripPlanner }) {
       setTimeout(() => setCopiedLink(false), 2000);
     }
   };
+
+  if (!loading && blogs.length === 0) {
+    return null;
+  }
 
   return (
     <section className="section-padding bg-warm" id="travel-blog" style={{ position: 'relative' }}>

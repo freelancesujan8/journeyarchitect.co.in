@@ -919,6 +919,15 @@ adminRouter.delete('/packages/:id', requireAdminAuth, (req, res) => {
     const existing = db.prepare('SELECT * FROM packages WHERE id = ?').get(id);
     if (!existing) return res.status(404).json({ success: false, error: 'Package not found' });
 
+    // Clean up dependent child records across tables so Foreign Key constraint never fails
+    const associatedBookings = db.prepare('SELECT id FROM bookings WHERE package_id = ?').all(id);
+    for (const b of associatedBookings) {
+      db.prepare('DELETE FROM travelers WHERE booking_id = ?').run(b.id);
+      db.prepare('DELETE FROM payments WHERE booking_id = ?').run(b.id);
+      db.prepare('DELETE FROM notifications WHERE booking_id = ?').run(b.id);
+      db.prepare('DELETE FROM bookings WHERE id = ?').run(b.id);
+    }
+
     db.prepare('DELETE FROM packages WHERE id = ?').run(id);
 
     db.prepare(`
@@ -929,7 +938,7 @@ adminRouter.delete('/packages/:id', requireAdminAuth, (req, res) => {
     res.json({ success: true, message: `Package ${existing.name} deleted successfully` });
   } catch (err) {
     console.error('Error deleting package:', err);
-    res.status(500).json({ success: false, error: 'Failed to delete package' });
+    res.status(500).json({ success: false, error: 'Failed to delete package: ' + err.message });
   }
 });
 

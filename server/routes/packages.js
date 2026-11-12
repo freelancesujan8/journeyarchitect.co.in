@@ -38,8 +38,8 @@ packagesRouter.get('/', (req, res) => {
     const params = [];
 
     if (category && category !== 'all') {
-      query += ' AND tour_category = ?';
-      params.push(category);
+      query += ' AND (LOWER(tour_category) = LOWER(?) OR LOWER(tour_category) LIKE LOWER(?))';
+      params.push(category, `%${category}%`);
     }
 
     if (featured === '1' || featured === 'true') {

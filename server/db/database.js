@@ -579,7 +579,15 @@ export function initDatabase() {
     }
   });
 
-  insertMany(SEED_PACKAGES);
+  // Only seed packages on first install; never resurrect packages if admin deleted them
+  const packagesSeeded = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'packages_seeded'").get();
+  if (!packagesSeeded) {
+    const pkgCount = db.prepare('SELECT COUNT(*) as count FROM packages').get().count;
+    if (pkgCount === 0) {
+      insertMany(SEED_PACKAGES);
+    }
+    db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value) VALUES ('packages_seeded', '1')").run();
+  }
 
   // Seed/Sync gallery items (Inserts any missing gallery item safely without removing existing ones)
   const insertGal = db.prepare(`
@@ -764,7 +772,15 @@ export function initDatabase() {
     }
   });
 
-  syncBlogs(SEED_BLOGS);
+  // Only seed blogs on first install; never resurrect blogs if admin deleted them
+  const blogsSeeded = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'blogs_seeded'").get();
+  if (!blogsSeeded) {
+    const blogCount = db.prepare('SELECT COUNT(*) as count FROM blogs').get().count;
+    if (blogCount === 0) {
+      syncBlogs(SEED_BLOGS);
+    }
+    db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value) VALUES ('blogs_seeded', '1')").run();
+  }
 
   // Seed contact settings if empty
   const contactSetting = db.prepare("SELECT * FROM site_settings WHERE setting_key = 'contact_info'").get();

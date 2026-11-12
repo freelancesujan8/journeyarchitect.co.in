@@ -11,13 +11,15 @@ export function PopularDestinations({ onOpenTripPlanner, navigate }) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [packages, setPackages] = useState(DESTINATIONS_DATA);
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Dynamically fetch packages from database
   useEffect(() => {
     let isMounted = true;
     async function loadPackages() {
       try {
+        setLoading(true);
         const res = await ApiClient.getPackages('all');
         if (isMounted && res && res.success && Array.isArray(res.packages)) {
           const formatted = res.packages.map((pkg) => ({
@@ -25,7 +27,7 @@ export function PopularDestinations({ onOpenTripPlanner, navigate }) {
             slug: pkg.slug,
             name: pkg.name,
             subtitle: pkg.destination,
-            region: pkg.destination.split(',')[0],
+            region: (pkg.destination || '').split(',')[0],
             category: pkg.tour_category,
             image: pkg.thumbnail || pkg.featured_image,
             description: pkg.short_description || pkg.description,
@@ -47,9 +49,14 @@ export function PopularDestinations({ onOpenTripPlanner, navigate }) {
             }[pkg.tour_category] || pkg.tour_category || 'Tour Package')
           }));
           setPackages(formatted);
+        } else if (isMounted) {
+          setPackages([]);
         }
       } catch (err) {
         console.warn('PopularDestinations: Error fetching packages from DB:', err);
+        if (isMounted) setPackages([]);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     }
     loadPackages();
@@ -123,6 +130,10 @@ export function PopularDestinations({ onOpenTripPlanner, navigate }) {
     const cardWidth = firstCard ? firstCard.offsetWidth + 20 : 360;
     el.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
   };
+
+  if (!loading && packages.length === 0) {
+    return null;
+  }
 
   return (
     <section className="section-padding bg-warm" id="destinations">

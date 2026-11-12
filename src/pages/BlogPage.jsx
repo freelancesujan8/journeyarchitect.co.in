@@ -5,14 +5,39 @@ import {
 } from 'lucide-react';
 import { SEOHead } from '../components/common/SEOHead';
 import { Button } from '../components/common/Button';
-import { BLOG_CATEGORIES, BLOG_POSTS } from '../data/blogData';
+import { BLOG_CATEGORIES } from '../data/blogData';
+import { ApiClient } from '../api/client';
 import { getWhatsAppUrl } from '../config/businessConfig';
 
 export function BlogPage({ onOpenTripPlanner, navigate }) {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All Guides");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeArticle, setActiveArticle] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadBlogs() {
+      try {
+        setLoading(true);
+        const res = await ApiClient.getBlogs();
+        if (isMounted && res && res.success && Array.isArray(res.blogs)) {
+          setBlogs(res.blogs);
+        } else if (isMounted) {
+          setBlogs([]);
+        }
+      } catch (err) {
+        console.warn('BlogPage: Error loading blogs from API:', err);
+        if (isMounted) setBlogs([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadBlogs();
+    return () => { isMounted = false; };
+  }, []);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -38,24 +63,24 @@ export function BlogPage({ onOpenTripPlanner, navigate }) {
   }, [activeArticle]);
 
   // Filter blog posts by category and search query
-  const filteredPosts = BLOG_POSTS.filter((post) => {
+  const filteredPosts = blogs.filter((post) => {
     const matchesCategory =
       selectedCategory === "All Guides" || post.category === selectedCategory;
 
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
       !q ||
-      post.title.toLowerCase().includes(q) ||
-      post.excerpt.toLowerCase().includes(q) ||
-      post.category.toLowerCase().includes(q) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(q));
+      post.title?.toLowerCase().includes(q) ||
+      post.excerpt?.toLowerCase().includes(q) ||
+      post.category?.toLowerCase().includes(q) ||
+      (Array.isArray(post.tags) && post.tags.some((tag) => tag.toLowerCase().includes(q)));
 
     return matchesCategory && matchesSearch;
   });
 
   const featuredPost =
     selectedCategory === "All Guides" && !searchQuery
-      ? BLOG_POSTS.find((p) => p.featured) || BLOG_POSTS[0]
+      ? blogs.find((p) => p.featured) || blogs[0]
       : null;
 
   const regularPosts = featuredPost
@@ -270,8 +295,8 @@ export function BlogPage({ onOpenTripPlanner, navigate }) {
               const isSelected = selectedCategory === cat;
               const count =
                 cat === "All Guides"
-                  ? BLOG_POSTS.length
-                  : BLOG_POSTS.filter((p) => p.category === cat).length;
+                  ? blogs.length
+                  : blogs.filter((p) => p.category === cat).length;
 
               return (
                 <button
@@ -323,61 +348,86 @@ export function BlogPage({ onOpenTripPlanner, navigate }) {
       {/* Main Blog Content Section */}
       <section className="section-padding" style={{ backgroundColor: 'var(--color-bg)' }}>
         <div className="container">
-          {/* Active Search & Filter Status indicator */}
-          {(searchQuery || selectedCategory !== "All Guides") && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '2rem',
-                backgroundColor: '#FFFFFF',
-                padding: '12px 20px',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--color-border-light)'
-              }}
-            >
-              <div style={{ fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
-                Showing <strong>{filteredPosts.length}</strong> {filteredPosts.length === 1 ? 'article' : 'articles'}
-                {selectedCategory !== "All Guides" && (
-                  <span> in <strong>{selectedCategory}</strong></span>
-                )}
-                {searchQuery && (
-                  <span> matching "<strong>{searchQuery}</strong>"</span>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCategory("All Guides");
-                  setSearchQuery("");
-                }}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--color-secondary)',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  textDecoration: 'underline'
-                }}
-              >
-                Reset Filters
-              </button>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <div className="spinner" style={{ width: '40px', height: '40px', margin: '0 auto 16px', borderColor: 'var(--color-teal)', borderTopColor: 'transparent' }} />
+              <p style={{ color: 'var(--color-text-muted)' }}>Loading travel stories and guides...</p>
             </div>
-          )}
+          ) : blogs.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E5E7EB', maxWidth: '600px', margin: '0 auto' }}>
+              <BookOpen size={48} color="var(--color-secondary)" style={{ margin: '0 auto 16px' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '8px' }}>
+                No travel articles currently published
+              </h3>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', marginBottom: '20px' }}>
+                Our team is writing fresh travel tales and travel tips. In the meantime, explore our holiday tour packages or plan your dream trip!
+              </p>
+              <Button
+                variant="secondary"
+                size="medium"
+                icon={<Compass size={16} />}
+                onClick={() => navigate('/tours')}
+              >
+                Browse Tour Packages
+              </Button>
+            </div>
+          ) : (
+            <>
+              {/* Active Search & Filter Status indicator */}
+              {(searchQuery || selectedCategory !== "All Guides") && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '2rem',
+                    backgroundColor: '#FFFFFF',
+                    padding: '12px 20px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--color-border-light)'
+                  }}
+                >
+                  <div style={{ fontSize: '0.9rem', color: 'var(--color-text-main)' }}>
+                    Showing <strong>{filteredPosts.length}</strong> {filteredPosts.length === 1 ? 'article' : 'articles'}
+                    {selectedCategory !== "All Guides" && (
+                      <span> in <strong>{selectedCategory}</strong></span>
+                    )}
+                    {searchQuery && (
+                      <span> matching "<strong>{searchQuery}</strong>"</span>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategory("All Guides");
+                      setSearchQuery("");
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--color-secondary)',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
 
-          {/* Featured Post Spotlight (shown when viewing all guides with no search) */}
-          {featuredPost && (
-            <div style={{ marginBottom: '3.5rem' }}>
-              <div
-                className="card-base"
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: 'var(--radius-xl)',
-                  overflow: 'hidden',
-                  boxShadow: 'var(--shadow-md)',
-                  display: 'grid',
+              {/* Featured Post Spotlight (shown when viewing all guides with no search) */}
+              {featuredPost && (
+                <div style={{ marginBottom: '3.5rem' }}>
+                  <div
+                    className="card-base"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: 'var(--radius-xl)',
+                      overflow: 'hidden',
+                      boxShadow: 'var(--shadow-md)',
+                      display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                   alignItems: 'stretch',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease'
@@ -750,6 +800,8 @@ export function BlogPage({ onOpenTripPlanner, navigate }) {
               </Button>
             </div>
           )}
+          </>
+        )}
         </div>
       </section>
 
