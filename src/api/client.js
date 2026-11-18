@@ -291,10 +291,17 @@ export const ApiClient = {
   },
 
   deleteAdminPackage: async (token, id) => {
-    return fetchJson(`/admin/packages/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    try {
+      return await fetchJson(`/admin/packages/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      return await fetchJson(`/admin/packages/${id}/delete`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
   },
 
   toggleAdminPackageStatus: async (token, id, availability_status) => {
@@ -493,10 +500,17 @@ export const ApiClient = {
   },
 
   deleteAdminBlog: async (token, id) => {
-    return fetchJson(`/admin/blogs/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    try {
+      return await fetchJson(`/admin/blogs/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      return await fetchJson(`/admin/blogs/${id}/delete`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    }
   },
 
   toggleAdminBlogStatus: async (token, id, is_active) => {

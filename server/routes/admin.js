@@ -913,14 +913,17 @@ adminRouter.put('/packages/:id', requireAdminAuth, (req, res) => {
 /**
  * DELETE /api/admin/packages/:id — Delete package
  */
-adminRouter.delete('/packages/:id', requireAdminAuth, (req, res) => {
+const handlePackageDelete = (req, res) => {
   try {
     const { id } = req.params;
-    const existing = db.prepare('SELECT * FROM packages WHERE id = ?').get(id);
+    const existing = db.prepare('SELECT * FROM packages WHERE id = ? OR package_id = ? OR slug = ?').get(id, id, id);
     if (!existing) return res.status(404).json({ success: false, error: 'Package not found' });
 
+    const targetId = existing.id;
+    const targetPkgId = existing.package_id;
+
     // Clean up dependent child records across tables so Foreign Key constraint never fails
-    const associatedBookings = db.prepare('SELECT id FROM bookings WHERE package_id = ?').all(id);
+    const associatedBookings = db.prepare('SELECT id FROM bookings WHERE package_id = ? OR package_id = ?').all(targetId, targetPkgId);
     for (const b of associatedBookings) {
       db.prepare('DELETE FROM travelers WHERE booking_id = ?').run(b.id);
       db.prepare('DELETE FROM payments WHERE booking_id = ?').run(b.id);
@@ -928,19 +931,22 @@ adminRouter.delete('/packages/:id', requireAdminAuth, (req, res) => {
       db.prepare('DELETE FROM bookings WHERE id = ?').run(b.id);
     }
 
-    db.prepare('DELETE FROM packages WHERE id = ?').run(id);
+    db.prepare('DELETE FROM packages WHERE id = ?').run(targetId);
 
     db.prepare(`
       INSERT INTO audit_logs (action, details, admin_user)
       VALUES ('DELETE_PACKAGE', ?, 'Admin')
-    `).run(`Deleted tour package: ${existing.name} (ID: ${id})`);
+    `).run(`Deleted tour package: ${existing.name} (ID: ${targetId})`);
 
     res.json({ success: true, message: `Package ${existing.name} deleted successfully` });
   } catch (err) {
     console.error('Error deleting package:', err);
     res.status(500).json({ success: false, error: 'Failed to delete package: ' + err.message });
   }
-});
+};
+
+adminRouter.delete('/packages/:id', requireAdminAuth, handlePackageDelete);
+adminRouter.post('/packages/:id/delete', requireAdminAuth, handlePackageDelete);
 
 /**
  * PUT /api/admin/packages/:id/status — Quick toggle status
@@ -1940,28 +1946,32 @@ adminRouter.put('/blogs/:id', requireAdminAuth, (req, res) => {
 /**
  * DELETE /api/admin/blogs/:id — Delete a blog post
  */
-adminRouter.delete('/blogs/:id', requireAdminAuth, (req, res) => {
+const handleBlogDelete = (req, res) => {
   try {
     const { id } = req.params;
-    const existing = db.prepare('SELECT title FROM blogs WHERE id = ?').get(id);
+    const existing = db.prepare('SELECT id, title FROM blogs WHERE id = ? OR blog_id = ? OR slug = ?').get(id, id, id);
     if (!existing) {
       return res.status(404).json({ success: false, error: 'Blog post not found' });
     }
 
-    db.prepare('DELETE FROM blogs WHERE id = ?').run(id);
+    const targetId = existing.id;
+    db.prepare('DELETE FROM blogs WHERE id = ?').run(targetId);
 
     // Audit Log
     db.prepare(`
       INSERT INTO audit_logs (action, details, admin_user)
       VALUES (?, ?, ?)
-    `).run('DELETE_BLOG', `Deleted blog: "${existing.title}" (ID: ${id})`, 'Admin');
+    `).run('DELETE_BLOG', `Deleted blog: "${existing.title}" (ID: ${targetId})`, 'Admin');
 
     res.json({ success: true, message: 'Blog post deleted successfully' });
   } catch (err) {
     console.error('Error deleting blog:', err);
     res.status(500).json({ success: false, error: 'Failed to delete blog post' });
   }
-});
+};
+
+adminRouter.delete('/blogs/:id', requireAdminAuth, handleBlogDelete);
+adminRouter.post('/blogs/:id/delete', requireAdminAuth, handleBlogDelete);
 
 /**
  * POST /api/admin/blogs/:id/status — Toggle active status
