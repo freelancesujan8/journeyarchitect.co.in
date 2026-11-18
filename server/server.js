@@ -13,6 +13,7 @@ import { servicesRouter } from './routes/services.js';
 import { blogsRouter } from './routes/blogs.js';
 import { cateringRouter } from './routes/catering.js';
 import { carRentalRouter } from './routes/carRental.js';
+import { homestaysRouter } from './routes/homestays.js';
 
 import path from 'path';
 import fs from 'fs';
@@ -56,6 +57,7 @@ app.use('/api/services', servicesRouter);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/catering', cateringRouter);
 app.use('/api/car-rental', carRentalRouter);
+app.use('/api/homestays', homestaysRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/admin', adminRouter);
 

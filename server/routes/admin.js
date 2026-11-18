@@ -1985,3 +1985,327 @@ adminRouter.post('/blogs/:id/status', requireAdminAuth, (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to update blog status' });
   }
 });
+
+// ============================================================
+// HOMESTAYS & HOMESTAY BOOKINGS MANAGEMENT
+// ============================================================
+
+/**
+ * GET /api/admin/homestays/settings — Fetch Homestay module settings (enabled/disabled)
+ */
+adminRouter.get('/homestays/settings', requireAdminAuth, (req, res) => {
+  try {
+    const row = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'homestay_settings'").get();
+    let settings = {
+      enabled: 1,
+      section_title: 'Handpicked Mountain & Forest Homestays',
+      section_subtitle: 'Experience authentic Himalayan warmth, organic local home-cooked feasts, and peaceful offbeat stays curated by Journey Architect.'
+    };
+    if (row && row.setting_value) {
+      settings = { ...settings, ...JSON.parse(row.setting_value) };
+    }
+    res.json({ success: true, settings });
+  } catch (err) {
+    console.error('Error fetching admin homestay settings:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch settings' });
+  }
+});
+
+/**
+ * PUT /api/admin/homestays/settings — Toggle Homestay module ON / OFF & update config
+ */
+adminRouter.put('/homestays/settings', requireAdminAuth, (req, res) => {
+  try {
+    const { enabled, section_title, section_subtitle } = req.body;
+    const row = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'homestay_settings'").get();
+    let current = {
+      enabled: 1,
+      section_title: 'Handpicked Mountain & Forest Homestays',
+      section_subtitle: 'Experience authentic Himalayan warmth, organic local home-cooked feasts, and peaceful offbeat stays curated by Journey Architect.'
+    };
+    if (row && row.setting_value) {
+      try { current = { ...current, ...JSON.parse(row.setting_value) }; } catch (e) {}
+    }
+
+    const updated = {
+      ...current,
+      enabled: enabled !== undefined ? (enabled ? 1 : 0) : current.enabled,
+      section_title: section_title || current.section_title,
+      section_subtitle: section_subtitle || current.section_subtitle
+    };
+
+    db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value) VALUES ('homestay_settings', ?)").run(JSON.stringify(updated));
+
+    db.prepare(`
+      INSERT INTO audit_logs (action, details, admin_user)
+      VALUES ('UPDATE_HOMESTAY_SETTINGS', ?, 'Admin')
+    `).run(`Homestay section toggled ${updated.enabled ? 'ON' : 'OFF'}`);
+
+    res.json({ success: true, settings: updated, message: `Homestay section is now ${updated.enabled ? 'Enabled' : 'Disabled'}` });
+  } catch (err) {
+    console.error('Error updating homestay settings:', err);
+    res.status(500).json({ success: false, error: 'Failed to update settings' });
+  }
+});
+
+/**
+ * GET /api/admin/homestays — List all homestays
+ */
+adminRouter.get('/homestays', requireAdminAuth, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM homestays ORDER BY display_order ASC, id DESC').all();
+    const homestays = rows.map((h) => ({
+      ...h,
+      amenities: safeParseJson(h.amenities, []),
+      gallery_images: safeParseJson(h.gallery_images, [])
+    }));
+    res.json({ success: true, count: homestays.length, homestays });
+  } catch (err) {
+    console.error('Error fetching admin homestays:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch homestays' });
+  }
+});
+
+/**
+ * POST /api/admin/homestays — Create new homestay
+ */
+adminRouter.post('/homestays', requireAdminAuth, (req, res) => {
+  try {
+    const data = req.body;
+    if (!data.name || !data.location) {
+      return res.status(400).json({ success: false, error: 'Name and location are required.' });
+    }
+
+    const homestayId = `HMS-${Date.now().toString().slice(-4)}`;
+    const slug = (data.slug || data.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+    const stmt = db.prepare(`
+      INSERT INTO homestays (
+        homestay_id, name, slug, location, region, price_per_night, room_type, max_guests,
+        amenities, thumbnail, gallery_images, short_description, description, host_name, host_phone,
+        booking_advance_percent, is_active, featured, display_order
+      ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?
+      )
+    `);
+
+    const result = stmt.run(
+      homestayId,
+      data.name.trim(),
+      slug,
+      data.location.trim(),
+      data.region || 'North Bengal & Sikkim',
+      Number(data.price_per_night) || 1500,
+      data.room_type || 'Deluxe Mountain View Room',
+      parseInt(data.max_guests, 10) || 4,
+      safeStringifyJson(data.amenities, ['Mountain View', 'Home-cooked Meals', '24/7 Hot Water', 'Free Wi-Fi']),
+      data.thumbnail || 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+      safeStringifyJson(data.gallery_images, []),
+      data.short_description || '',
+      data.description || '',
+      data.host_name || 'Journey Architect Host',
+      data.host_phone || '79803 31022',
+      parseInt(data.booking_advance_percent, 10) || 25,
+      data.is_active !== undefined ? (data.is_active ? 1 : 0) : 1,
+      data.featured ? 1 : 0,
+      parseInt(data.display_order, 10) || 1
+    );
+
+    db.prepare(`
+      INSERT INTO audit_logs (action, details, admin_user)
+      VALUES ('CREATE_HOMESTAY', ?, 'Admin')
+    `).run(`Created new homestay: "${data.name}" (${homestayId})`);
+
+    res.json({
+      success: true,
+      message: 'Homestay created successfully',
+      id: result.lastInsertRowid,
+      homestay_id: homestayId
+    });
+  } catch (err) {
+    console.error('Error creating homestay:', err);
+    res.status(500).json({ success: false, error: 'Failed to create homestay: ' + err.message });
+  }
+});
+
+/**
+ * PUT /api/admin/homestays/:id — Update existing homestay
+ */
+adminRouter.put('/homestays/:id', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const existing = db.prepare('SELECT * FROM homestays WHERE id = ?').get(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Homestay not found' });
+    }
+
+    const slug = data.slug
+      ? data.slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      : existing.slug;
+
+    db.prepare(`
+      UPDATE homestays SET
+        name = ?,
+        slug = ?,
+        location = ?,
+        region = ?,
+        price_per_night = ?,
+        room_type = ?,
+        max_guests = ?,
+        amenities = ?,
+        thumbnail = ?,
+        gallery_images = ?,
+        short_description = ?,
+        description = ?,
+        host_name = ?,
+        host_phone = ?,
+        booking_advance_percent = ?,
+        is_active = ?,
+        featured = ?,
+        display_order = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(
+      data.name !== undefined ? data.name.trim() : existing.name,
+      slug,
+      data.location !== undefined ? data.location.trim() : existing.location,
+      data.region !== undefined ? data.region : existing.region,
+      data.price_per_night !== undefined ? Number(data.price_per_night) : existing.price_per_night,
+      data.room_type !== undefined ? data.room_type : existing.room_type,
+      data.max_guests !== undefined ? parseInt(data.max_guests, 10) : existing.max_guests,
+      data.amenities !== undefined ? safeStringifyJson(data.amenities, []) : existing.amenities,
+      data.thumbnail !== undefined ? data.thumbnail : existing.thumbnail,
+      data.gallery_images !== undefined ? safeStringifyJson(data.gallery_images, []) : existing.gallery_images,
+      data.short_description !== undefined ? data.short_description : existing.short_description,
+      data.description !== undefined ? data.description : existing.description,
+      data.host_name !== undefined ? data.host_name : existing.host_name,
+      data.host_phone !== undefined ? data.host_phone : existing.host_phone,
+      data.booking_advance_percent !== undefined ? parseInt(data.booking_advance_percent, 10) : existing.booking_advance_percent,
+      data.is_active !== undefined ? (data.is_active ? 1 : 0) : existing.is_active,
+      data.featured !== undefined ? (data.featured ? 1 : 0) : existing.featured,
+      data.display_order !== undefined ? parseInt(data.display_order, 10) : existing.display_order,
+      id
+    );
+
+    res.json({ success: true, message: 'Homestay updated successfully' });
+  } catch (err) {
+    console.error('Error updating homestay:', err);
+    res.status(500).json({ success: false, error: 'Failed to update homestay: ' + err.message });
+  }
+});
+
+/**
+ * DELETE /api/admin/homestays/:id — Delete homestay & child bookings
+ */
+adminRouter.delete('/homestays/:id', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const existing = db.prepare('SELECT * FROM homestays WHERE id = ?').get(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Homestay not found' });
+    }
+
+    db.prepare('DELETE FROM homestay_bookings WHERE homestay_id = ?').run(id);
+    db.prepare('DELETE FROM homestays WHERE id = ?').run(id);
+
+    db.prepare(`
+      INSERT INTO audit_logs (action, details, admin_user)
+      VALUES ('DELETE_HOMESTAY', ?, 'Admin')
+    `).run(`Deleted homestay: "${existing.name}" (ID: ${id})`);
+
+    res.json({ success: true, message: `Homestay "${existing.name}" deleted successfully` });
+  } catch (err) {
+    console.error('Error deleting homestay:', err);
+    res.status(500).json({ success: false, error: 'Failed to delete homestay' });
+  }
+});
+
+/**
+ * PUT /api/admin/homestays/:id/status — Toggle active status
+ */
+adminRouter.put('/homestays/:id/status', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const existing = db.prepare('SELECT is_active, name FROM homestays WHERE id = ?').get(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Homestay not found' });
+    }
+
+    const nextStatus = existing.is_active ? 0 : 1;
+    db.prepare('UPDATE homestays SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(nextStatus, id);
+
+    res.json({ success: true, is_active: nextStatus, message: `Homestay "${existing.name}" is now ${nextStatus ? 'Active' : 'Hidden'}` });
+  } catch (err) {
+    console.error('Error toggling homestay status:', err);
+    res.status(500).json({ success: false, error: 'Failed to toggle status' });
+  }
+});
+
+/**
+ * GET /api/admin/homestays/bookings — List all homestay booking requests
+ */
+adminRouter.get('/homestays/bookings', requireAdminAuth, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM homestay_bookings ORDER BY id DESC').all();
+    res.json({ success: true, count: rows.length, bookings: rows });
+  } catch (err) {
+    console.error('Error fetching homestay bookings:', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch bookings' });
+  }
+});
+
+/**
+ * PUT /api/admin/homestays/bookings/:id/status — Update homestay booking status
+ */
+adminRouter.put('/homestays/bookings/:id/status', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const { booking_status, payment_status, admin_notes } = req.body;
+    const existing = db.prepare('SELECT * FROM homestay_bookings WHERE id = ?').get(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Homestay booking not found' });
+    }
+
+    db.prepare(`
+      UPDATE homestay_bookings SET
+        booking_status = COALESCE(?, booking_status),
+        payment_status = COALESCE(?, payment_status),
+        admin_notes = COALESCE(?, admin_notes),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(booking_status || null, payment_status || null, admin_notes || null, id);
+
+    res.json({ success: true, message: 'Homestay booking updated successfully' });
+  } catch (err) {
+    console.error('Error updating homestay booking:', err);
+    res.status(500).json({ success: false, error: 'Failed to update booking' });
+  }
+});
+
+/**
+ * DELETE /api/admin/homestays/bookings/:id — Delete homestay booking
+ */
+adminRouter.delete('/homestays/bookings/:id', requireAdminAuth, (req, res) => {
+  try {
+    const { id } = req.params;
+    const existing = db.prepare('SELECT booking_id FROM homestay_bookings WHERE id = ?').get(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Booking not found' });
+    }
+
+    db.prepare('DELETE FROM homestay_bookings WHERE id = ?').run(id);
+
+    db.prepare(`
+      INSERT INTO audit_logs (action, details, admin_user)
+      VALUES ('DELETE_HOMESTAY_BOOKING', ?, 'Admin')
+    `).run(`Deleted homestay booking: ${existing.booking_id}`);
+
+    res.json({ success: true, message: 'Booking deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting homestay booking:', err);
+    res.status(500).json({ success: false, error: 'Failed to delete booking' });
+  }
+});

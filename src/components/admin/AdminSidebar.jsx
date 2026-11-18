@@ -17,7 +17,8 @@ import {
   LogOut,
   X,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Home as HomeIcon
 } from 'lucide-react';
 
 /**
@@ -79,6 +80,13 @@ export function AdminSidebar({
           icon: Car,
           badge: counts.carRentalNewCount > 0 ? `${counts.carRentalNewCount} New` : counts.carRentalCount ? `${counts.carRentalCount}` : null,
           badgeColor: counts.carRentalNewCount > 0 ? '#F59E0B' : '#6B7280'
+        },
+        {
+          id: 'homestays',
+          label: 'Homestays & Bookings',
+          icon: HomeIcon,
+          badge: counts.homestaysNewCount > 0 ? `${counts.homestaysNewCount} New` : counts.homestaysCount ? `${counts.homestaysCount}` : null,
+          badgeColor: counts.homestaysNewCount > 0 ? '#10B981' : '#6B7280'
         }
       ]
     },

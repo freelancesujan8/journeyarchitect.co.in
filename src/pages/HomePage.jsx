@@ -6,6 +6,7 @@ import { ServicesSection } from '../components/home/ServicesSection';
 import { WhyChooseUs } from '../components/home/WhyChooseUs';
 import { AboutTeaser } from '../components/home/AboutTeaser';
 import { PopularDestinations } from '../components/home/PopularDestinations';
+import { HomestaySection } from '../components/home/HomestaySection';
 import { HowItWorks } from '../components/home/HowItWorks';
 import { HomeGallery } from '../components/home/HomeGallery';
 import { HomeBlogSection } from '../components/home/HomeBlogSection';
@@ -39,6 +40,9 @@ export function HomePage({ onOpenTripPlanner, navigate }) {
 
         {/* Section 6: Popular Destinations */}
         <PopularDestinations onOpenTripPlanner={onOpenTripPlanner} navigate={navigate} />
+
+        {/* Section 6.5: Handpicked Homestays (Controlled by Admin On/Off Toggle) */}
+        <HomestaySection onOpenTripPlanner={onOpenTripPlanner} navigate={navigate} />
 
         {/* Section 7: Process / How It Works */}
         <HowItWorks />

@@ -5,7 +5,7 @@ import {
   TrendingUp, Users, DollarSign, Lock, LogOut, MessageCircle, FileText,
   Video, Globe, Shield, Sparkles, MapPin, Check, X, ArrowUpDown, ExternalLink,
   UploadCloud, Upload, Briefcase, Utensils, UtensilsCrossed, Car, Compass, Hotel, Layers,
-  BookOpen, Bookmark, Tag, Mail, Send, Bell, RotateCcw, Menu
+  BookOpen, Bookmark, Tag, Mail, Send, Bell, RotateCcw, Menu, Home as HomeIcon
 } from 'lucide-react';
 import SEOHead from '../components/common/SEOHead';
 import { ApiClient } from '../api/client';
@@ -337,6 +337,43 @@ export default function AdminDashboardPage({ onNavigate }) {
     };
   }
 
+  // Homestays & Booking State
+  const [homestays, setHomestays] = useState([]);
+  const [homestayBookings, setHomestayBookings] = useState([]);
+  const [homestaySettings, setHomestaySettings] = useState({ enabled: 1, section_title: 'Comfortable Mountain Homestays & Retreats', section_subtitle: 'Experience authentic Himalayan warmth' });
+  const [togglingHomestaySetting, setTogglingHomestaySetting] = useState(false);
+  const [homestayActiveSubTab, setHomestayActiveSubTab] = useState('properties');
+  const [homestaySearch, setHomestaySearch] = useState('');
+  const [homestayBookingFilter, setHomestayBookingFilter] = useState('ALL');
+  const [homestayBookingSearch, setHomestayBookingSearch] = useState('');
+  const [isHomestayModalOpen, setIsHomestayModalOpen] = useState(false);
+  const [editingHomestay, setEditingHomestay] = useState(null);
+
+  function getInitialHomestayForm() {
+    return {
+      name: '',
+      slug: '',
+      location: '',
+      region: 'North Bengal',
+      price_per_night: 1500,
+      room_type: 'Standard Double Room',
+      max_guests: 4,
+      amenities: 'Mountain View, Home-cooked Meals, Free WiFi, Hot Water, Bonfire, Nature Walks',
+      thumbnail: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=800&q=80',
+      gallery_images: '',
+      short_description: '',
+      description: '',
+      host_name: '',
+      host_phone: '',
+      booking_advance_percent: 30,
+      is_active: 1,
+      featured: 0,
+      display_order: 0
+    };
+  }
+
+  const [homestayForm, setHomestayForm] = useState(getInitialHomestayForm());
+
   function getInitialServiceForm() {
     return {
       title: '',
@@ -492,7 +529,7 @@ export default function AdminDashboardPage({ onNavigate }) {
     if (!token) return;
     setLoading(true);
     try {
-      const [statsRes, bookingsRes, packagesRes, galleryRes, servicesRes, contactRes, paymentsRes, logsRes, blogsRes, notifRes, cateringRes, carRentalRes, cuisinesRes, brandingRes, calendarRes] = await Promise.all([
+      const [statsRes, bookingsRes, packagesRes, galleryRes, servicesRes, contactRes, paymentsRes, logsRes, blogsRes, notifRes, cateringRes, carRentalRes, cuisinesRes, brandingRes, calendarRes, homestaysRes, homestayBookingsRes, homestaySettingsRes] = await Promise.all([
         ApiClient.getAdminStats(token),
         ApiClient.getAdminBookings(token, bookingFilter, bookingSearch),
         ApiClient.getAdminPackages(token),
@@ -507,7 +544,10 @@ export default function AdminDashboardPage({ onNavigate }) {
         ApiClient.getAdminCarRentalLeads(token, carRentalFilter, carRentalSearch).catch(() => ({ leads: [] })),
         ApiClient.getAdminCateringCuisines(token, cuisineCategoryFilter === 'ALL' ? '' : cuisineCategoryFilter, cuisineSearch).catch(() => ({ cuisines: [] })),
         ApiClient.getAdminBrandingSettings(token).catch(() => null),
-        ApiClient.getAdminCalendarSummary(token).catch(() => null)
+        ApiClient.getAdminCalendarSummary(token).catch(() => null),
+        ApiClient.getAdminHomestays(token).catch(() => ({ homestays: [] })),
+        ApiClient.getAdminHomestayBookings(token).catch(() => ({ bookings: [] })),
+        ApiClient.getAdminHomestaySettings(token).catch(() => ({ settings: { enabled: 1 } }))
       ]);
 
       if (statsRes?.stats) setStats(statsRes.stats);
@@ -528,6 +568,9 @@ export default function AdminDashboardPage({ onNavigate }) {
       if (cuisinesRes?.cuisines) setCuisines(cuisinesRes.cuisines);
       if (brandingRes?.branding) setBrandingSettings(brandingRes.branding);
       if (calendarRes?.summary) setCalendarSummary(calendarRes.summary);
+      if (homestaysRes?.homestays) setHomestays(homestaysRes.homestays);
+      if (homestayBookingsRes?.bookings) setHomestayBookings(homestayBookingsRes.bookings);
+      if (homestaySettingsRes?.settings) setHomestaySettings(homestaySettingsRes.settings);
     } catch (err) {
       console.error('Error loading admin data:', err);
       if (err.message && err.message.includes('authorization')) {
@@ -1282,6 +1325,98 @@ export default function AdminDashboardPage({ onNavigate }) {
     }
   };
 
+  // ================= HOMESTAY HANDLERS =================
+  const handleToggleHomestaySetting = async () => {
+    const nextVal = homestaySettings.enabled ? 0 : 1;
+    setTogglingHomestaySetting(true);
+    try {
+      const res = await ApiClient.updateAdminHomestaySettings(token, {
+        ...homestaySettings,
+        enabled: nextVal
+      });
+      setHomestaySettings(res.settings);
+      showFeedback(`Homestay section is now ${nextVal ? 'ON (Active on Website)' : 'OFF (Hidden from Website & Admin Disabled)'}`);
+    } catch (err) {
+      alert('Error updating homestay setting: ' + err.message);
+    } finally {
+      setTogglingHomestaySetting(false);
+    }
+  };
+
+  const handleSaveHomestay = async (e) => {
+    e.preventDefault();
+    if (!homestayForm.name || !homestayForm.location) {
+      alert('Please fill in homestay name and location');
+      return;
+    }
+    try {
+      if (editingHomestay) {
+        await ApiClient.updateAdminHomestay(token, editingHomestay.id, homestayForm);
+        showFeedback(`Homestay "${homestayForm.name}" updated successfully!`);
+      } else {
+        await ApiClient.createAdminHomestay(token, homestayForm);
+        showFeedback(`New homestay "${homestayForm.name}" added successfully!`);
+      }
+      setIsHomestayModalOpen(false);
+      setEditingHomestay(null);
+      setHomestayForm(getInitialHomestayForm());
+      await loadDashboardData();
+    } catch (err) {
+      alert('Error saving homestay: ' + err.message);
+    }
+  };
+
+  const handleDeleteHomestay = async (homestay) => {
+    if (!window.confirm(`Are you sure you want to delete "${homestay.name}"? All associated bookings will also be removed.`)) return;
+    try {
+      await ApiClient.deleteAdminHomestay(token, homestay.id);
+      showFeedback(`Homestay "${homestay.name}" deleted.`);
+      await loadDashboardData();
+    } catch (err) {
+      alert('Error deleting homestay: ' + err.message);
+    }
+  };
+
+  const handleToggleHomestayStatus = async (homestay) => {
+    const nextStatus = homestay.is_active ? 0 : 1;
+    try {
+      await ApiClient.toggleAdminHomestayStatus(token, homestay.id, nextStatus);
+      showFeedback(`Homestay "${homestay.name}" status updated to ${nextStatus ? 'Active' : 'Inactive'}.`);
+      await loadDashboardData();
+    } catch (err) {
+      alert('Error toggling homestay status: ' + err.message);
+    }
+  };
+
+  const handleUpdateHomestayBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await ApiClient.updateAdminHomestayBookingStatus(token, bookingId, newStatus);
+      showFeedback(`Booking ${bookingId} status changed to ${newStatus}`);
+      await loadDashboardData();
+    } catch (err) {
+      alert('Error updating booking status: ' + err.message);
+    }
+  };
+
+  const handleDeleteHomestayBooking = async (booking) => {
+    if (!window.confirm(`Delete homestay booking "${booking.booking_id}" for guest ${booking.guest_name}?`)) return;
+    try {
+      await ApiClient.deleteAdminHomestayBooking(token, booking.id);
+      showFeedback(`Booking "${booking.booking_id}" deleted.`);
+      await loadDashboardData();
+    } catch (err) {
+      alert('Error deleting booking: ' + err.message);
+    }
+  };
+
+  const handleOpenWhatsAppHomestayBooking = (b) => {
+    const phone = b.whatsapp_number || b.phone;
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const fullPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+    const text = `Hello ${b.guest_name}, greetings from Journey Architect! Regarding your homestay booking reservation ${b.booking_id} for ${b.homestay_name} (Check-in: ${b.check_in}, Check-out: ${b.check_out}). We are happy to assist you with your stay confirmation.`;
+    window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   // ================= AUTH SCREEN =================
   if (!token) {
     return (
@@ -1392,6 +1527,8 @@ export default function AdminDashboardPage({ onNavigate }) {
           cateringNewCount: cateringLeads.filter(l => l.status === 'NEW').length,
           carRentalCount: carRentalLeads.length,
           carRentalNewCount: carRentalLeads.filter(l => l.status === 'NEW').length,
+          homestaysCount: homestays.length,
+          homestaysNewCount: homestayBookings.filter(b => b.booking_status === 'PENDING').length,
           bookingsCount: bookings.length,
           bookingsPendingCount: bookings.filter(b => b.booking_status === 'PENDING_PAYMENT').length,
           paymentsCount: payments.length,
@@ -1469,6 +1606,7 @@ export default function AdminDashboardPage({ onNavigate }) {
                  activeTab === 'cuisines' ? 'Cuisine & Catering Menu' :
                  activeTab === 'catering' ? 'Catering Leads & Requests' :
                  activeTab === 'car-rental' ? 'Car Rental Leads & Bookings' :
+                 activeTab === 'homestays' ? 'Homestay Properties & Booking Management' :
                  activeTab === 'branding' ? 'Website Logo & Branding' :
                  activeTab === 'contact' ? 'Contact Info & Notifications' :
                  activeTab === 'bookings' ? 'Customer Tour Bookings' :
@@ -3907,6 +4045,575 @@ export default function AdminDashboardPage({ onNavigate }) {
           </div>
         )}
 
+        {/* TAB 8: HOMESTAY MANAGEMENT */}
+        {activeTab === 'homestays' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {/* Top Header Card with ON / OFF Visual Toggle Switch */}
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '16px',
+                border: '1px solid #E5E7EB',
+                padding: '1.5rem 1.75rem',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1.5rem'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '12px',
+                    backgroundColor: homestaySettings.enabled ? '#ECFDF5' : '#F1F5F9',
+                    border: `1px solid ${homestaySettings.enabled ? '#A7F3D0' : '#CBD5E1'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: homestaySettings.enabled ? '#059669' : '#64748B',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <HomeIcon size={26} />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--color-primary)', margin: 0 }}>
+                      Homestay Properties & Booking Engine
+                    </h2>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        padding: '3px 10px',
+                        borderRadius: '999px',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        backgroundColor: homestaySettings.enabled ? '#DEF7EC' : '#F3F4F6',
+                        color: homestaySettings.enabled ? '#03543F' : '#6B7280',
+                        border: `1px solid ${homestaySettings.enabled ? '#31C48D' : '#D1D5DB'}`
+                      }}
+                    >
+                      {homestaySettings.enabled ? '● LIVE ON WEBSITE' : '○ TURNED OFF'}
+                    </span>
+                  </div>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748B' }}>
+                    Toggle homestay availability on the homepage, manage properties, host contacts, and track customer room bookings.
+                  </p>
+                </div>
+              </div>
+
+              {/* The Requested Toggle Button Control */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  padding: '10px 16px',
+                  backgroundColor: homestaySettings.enabled ? '#F0FDF4' : '#F8FAFC',
+                  borderRadius: '12px',
+                  border: `1.5px solid ${homestaySettings.enabled ? '#86EFAC' : '#E2E8F0'}`
+                }}
+              >
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: homestaySettings.enabled ? '#15803D' : '#475569' }}>
+                    {homestaySettings.enabled ? 'Section Enabled (ON)' : 'Section Disabled (OFF)'}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748B' }}>
+                    {homestaySettings.enabled ? 'Shown on Homepage' : 'Hidden from Website'}
+                  </div>
+                </div>
+
+                {/* Big Interactive Toggle Switch */}
+                <button
+                  type="button"
+                  onClick={handleToggleHomestaySetting}
+                  disabled={togglingHomestaySetting}
+                  style={{
+                    width: '60px',
+                    height: '32px',
+                    borderRadius: '16px',
+                    backgroundColor: homestaySettings.enabled ? '#10B981' : '#94A3B8',
+                    border: 'none',
+                    cursor: togglingHomestaySetting ? 'not-allowed' : 'pointer',
+                    padding: '3px',
+                    position: 'relative',
+                    transition: 'background-color 0.25s ease',
+                    outline: 'none',
+                    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.15)'
+                  }}
+                  title={homestaySettings.enabled ? 'Click to turn OFF Homestays' : 'Click to turn ON Homestays'}
+                >
+                  <div
+                    style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '50%',
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
+                      transform: homestaySettings.enabled ? 'translateX(28px)' : 'translateX(0px)',
+                      transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Disabled Warning Notice when OFF */}
+            {!homestaySettings.enabled && (
+              <div
+                style={{
+                  backgroundColor: '#FFFBEB',
+                  border: '1px solid #FDE68A',
+                  borderRadius: '12px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  color: '#92400E'
+                }}
+              >
+                <AlertCircle size={22} color="#D97706" style={{ flexShrink: 0 }} />
+                <div style={{ fontSize: '0.875rem', lineHeight: '1.4' }}>
+                  <strong>Homestay System is Turned OFF:</strong> The Homestay section is completely hidden from the public website, and visitors cannot view or book homestays. As requested, all administrative controls below are disabled while the system is turned off. Flip the switch above to <strong>ON</strong> to re-activate the section and enable controls.
+                </div>
+              </div>
+            )}
+
+            {/* Main Container - visually disabled and unclickable when OFF as requested */}
+            <div
+              style={{
+                opacity: homestaySettings.enabled ? 1 : 0.45,
+                pointerEvents: homestaySettings.enabled ? 'auto' : 'none',
+                userSelect: homestaySettings.enabled ? 'auto' : 'none',
+                transition: 'opacity 0.25s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem'
+              }}
+            >
+              {/* Subtab Switcher (Properties vs Bookings) */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', gap: '8px', backgroundColor: '#F1F5F9', padding: '4px', borderRadius: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setHomestayActiveSubTab('properties')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      backgroundColor: homestayActiveSubTab === 'properties' ? '#FFFFFF' : 'transparent',
+                      color: homestayActiveSubTab === 'properties' ? 'var(--color-primary)' : '#64748B',
+                      boxShadow: homestayActiveSubTab === 'properties' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <HomeIcon size={16} />
+                    <span>Homestay Properties ({homestays.length})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHomestayActiveSubTab('bookings')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      backgroundColor: homestayActiveSubTab === 'bookings' ? '#FFFFFF' : 'transparent',
+                      color: homestayActiveSubTab === 'bookings' ? 'var(--color-primary)' : '#64748B',
+                      boxShadow: homestayActiveSubTab === 'bookings' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <CalendarCheck size={16} />
+                    <span>Room Bookings ({homestayBookings.length})</span>
+                    {homestayBookings.filter(b => b.booking_status === 'PENDING').length > 0 && (
+                      <span style={{ backgroundColor: '#EF4444', color: '#FFFFFF', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '999px', fontWeight: 800 }}>
+                        {homestayBookings.filter(b => b.booking_status === 'PENDING').length} New
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {homestayActiveSubTab === 'properties' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingHomestay(null);
+                      setHomestayForm(getInitialHomestayForm());
+                      setIsHomestayModalOpen(true);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '9px 18px',
+                      backgroundColor: 'var(--color-secondary, #167C80)',
+                      color: '#FFFFFF',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 6px rgba(22, 124, 128, 0.25)'
+                    }}
+                  >
+                    <Plus size={16} />
+                    <span>Add New Homestay</span>
+                  </button>
+                )}
+              </div>
+
+              {/* SUBTAB 1: HOMESTAY PROPERTIES */}
+              {homestayActiveSubTab === 'properties' && (
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.25rem' }}>
+                  {/* Search bar */}
+                  <div style={{ marginBottom: '1.25rem', position: 'relative', maxWidth: '400px' }}>
+                    <Search size={16} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                    <input
+                      type="text"
+                      placeholder="Search by homestay name, region, or location..."
+                      value={homestaySearch}
+                      onChange={(e) => setHomestaySearch(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '9px 12px 9px 36px',
+                        borderRadius: '8px',
+                        border: '1px solid #D1D5DB',
+                        fontSize: '0.85rem',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  {/* Properties Table */}
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '2px solid #E5E7EB', color: '#4B5563', textTransform: 'uppercase', fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+                          <th style={{ padding: '12px 14px' }}>Homestay</th>
+                          <th style={{ padding: '12px 14px' }}>Region & Location</th>
+                          <th style={{ padding: '12px 14px' }}>Room & Guests</th>
+                          <th style={{ padding: '12px 14px' }}>Price / Night</th>
+                          <th style={{ padding: '12px 14px' }}>Advance %</th>
+                          <th style={{ padding: '12px 14px' }}>Status</th>
+                          <th style={{ padding: '12px 14px', textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {homestays
+                          .filter(h => {
+                            if (!homestaySearch) return true;
+                            const q = homestaySearch.toLowerCase();
+                            return h.name?.toLowerCase().includes(q) ||
+                              h.location?.toLowerCase().includes(q) ||
+                              h.region?.toLowerCase().includes(q);
+                          })
+                          .map((h) => (
+                            <tr key={h.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                  <img
+                                    src={h.thumbnail || 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=200&q=80'}
+                                    alt={h.name}
+                                    style={{ width: '54px', height: '42px', borderRadius: '6px', objectFit: 'cover' }}
+                                  />
+                                  <div>
+                                    <div style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{h.name}</div>
+                                    {h.featured === 1 && (
+                                      <span style={{ fontSize: '0.68rem', backgroundColor: '#FEF3C7', color: '#92400E', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>
+                                        ★ Featured
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ fontWeight: 600, color: '#374151' }}>{h.location}</div>
+                                <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>{h.region}</span>
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ color: '#374151' }}>{h.room_type}</div>
+                                <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>Up to {h.max_guests} Guests</span>
+                              </td>
+                              <td style={{ padding: '12px 14px', fontWeight: 700, color: '#059669' }}>
+                                ₹{Number(h.price_per_night || 0).toLocaleString('en-IN')}
+                              </td>
+                              <td style={{ padding: '12px 14px', color: '#4B5563' }}>
+                                {h.booking_advance_percent || 30}%
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleHomestayStatus(h)}
+                                  style={{
+                                    padding: '4px 10px',
+                                    borderRadius: '999px',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 700,
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    backgroundColor: h.is_active ? '#DEF7EC' : '#FDE8E8',
+                                    color: h.is_active ? '#03543F' : '#9B1C1C'
+                                  }}
+                                >
+                                  {h.is_active ? '● Active' : '○ Inactive'}
+                                </button>
+                              </td>
+                              <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                                <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingHomestay(h);
+                                      setHomestayForm({
+                                        name: h.name || '',
+                                        slug: h.slug || '',
+                                        location: h.location || '',
+                                        region: h.region || 'North Bengal',
+                                        price_per_night: h.price_per_night || 1500,
+                                        room_type: h.room_type || 'Standard Double Room',
+                                        max_guests: h.max_guests || 4,
+                                        amenities: h.amenities || '',
+                                        thumbnail: h.thumbnail || '',
+                                        gallery_images: h.gallery_images || '',
+                                        short_description: h.short_description || '',
+                                        description: h.description || '',
+                                        host_name: h.host_name || '',
+                                        host_phone: h.host_phone || '',
+                                        booking_advance_percent: h.booking_advance_percent || 30,
+                                        is_active: h.is_active,
+                                        featured: h.featured || 0,
+                                        display_order: h.display_order || 0
+                                      });
+                                      setIsHomestayModalOpen(true);
+                                    }}
+                                    title="Edit Homestay"
+                                    style={{ padding: '6px', borderRadius: '6px', border: '1px solid #D1D5DB', backgroundColor: '#FFFFFF', color: '#4B5563', cursor: 'pointer' }}
+                                  >
+                                    <Edit3 size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteHomestay(h)}
+                                    title="Delete Homestay"
+                                    style={{ padding: '6px', borderRadius: '6px', border: '1px solid #FCA5A5', backgroundColor: '#FEF2F2', color: '#DC2626', cursor: 'pointer' }}
+                                  >
+                                    <Trash2 size={15} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        {homestays.length === 0 && (
+                          <tr>
+                            <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#9CA3AF' }}>
+                              No homestays found. Click "Add New Homestay" to add properties.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* SUBTAB 2: BOOKING RESERVATIONS */}
+              {homestayActiveSubTab === 'bookings' && (
+                <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E5E7EB', padding: '1.25rem' }}>
+                  {/* Filters & Search */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {['ALL', 'PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map((st) => (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => setHomestayBookingFilter(st)}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '0.78rem',
+                            fontWeight: 600,
+                            border: '1px solid #D1D5DB',
+                            backgroundColor: homestayBookingFilter === st ? 'var(--color-primary)' : '#FFFFFF',
+                            color: homestayBookingFilter === st ? '#FFFFFF' : '#374151',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {st === 'ALL' ? 'All Bookings' : st}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div style={{ position: 'relative', width: '280px' }}>
+                      <Search size={16} color="#9CA3AF" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                      <input
+                        type="text"
+                        placeholder="Search booking ID, guest, phone..."
+                        value={homestayBookingSearch}
+                        onChange={(e) => setHomestayBookingSearch(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '7px 10px 7px 32px',
+                          borderRadius: '6px',
+                          border: '1px solid #D1D5DB',
+                          fontSize: '0.82rem'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bookings Table */}
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#F9FAFB', borderBottom: '2px solid #E5E7EB', color: '#4B5563', textTransform: 'uppercase', fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+                          <th style={{ padding: '12px 14px' }}>Booking ID</th>
+                          <th style={{ padding: '12px 14px' }}>Homestay</th>
+                          <th style={{ padding: '12px 14px' }}>Guest Details</th>
+                          <th style={{ padding: '12px 14px' }}>Stay Dates & Rooms</th>
+                          <th style={{ padding: '12px 14px' }}>Pricing & Advance</th>
+                          <th style={{ padding: '12px 14px' }}>Status</th>
+                          <th style={{ padding: '12px 14px', textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {homestayBookings
+                          .filter(b => {
+                            if (homestayBookingFilter !== 'ALL' && b.booking_status !== homestayBookingFilter) return false;
+                            if (homestayBookingSearch) {
+                              const q = homestayBookingSearch.toLowerCase();
+                              return b.booking_id?.toLowerCase().includes(q) ||
+                                b.guest_name?.toLowerCase().includes(q) ||
+                                b.phone?.includes(q) ||
+                                b.homestay_name?.toLowerCase().includes(q);
+                            }
+                            return true;
+                          })
+                          .map((b) => (
+                            <tr key={b.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
+                              <td style={{ padding: '12px 14px' }}>
+                                <span style={{ fontWeight: 800, color: 'var(--color-primary)', fontFamily: 'monospace' }}>
+                                  {b.booking_id}
+                                </span>
+                                <div style={{ fontSize: '0.72rem', color: '#9CA3AF' }}>
+                                  {b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN') : ''}
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px 14px', fontWeight: 600, color: '#1F2937' }}>
+                                {b.homestay_name}
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ fontWeight: 700, color: '#111827' }}>{b.guest_name}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#4B5563' }}>📞 {b.phone}</div>
+                                {b.email && <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>✉️ {b.email}</div>}
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ fontSize: '0.8rem', color: '#1F2937' }}>
+                                  📅 <strong>{b.check_in}</strong> to <strong>{b.check_out}</strong>
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                                  {b.nights} night(s) • {b.rooms_count} room(s) • {b.guests_count} guest(s)
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <div style={{ fontWeight: 800, color: '#059669' }}>
+                                  Total: ₹{Number(b.total_amount || 0).toLocaleString('en-IN')}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#D97706', fontWeight: 600 }}>
+                                  Advance: ₹{Number(b.advance_amount || 0).toLocaleString('en-IN')}
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px 14px' }}>
+                                <select
+                                  value={b.booking_status}
+                                  onChange={(e) => handleUpdateHomestayBookingStatus(b.id, e.target.value)}
+                                  style={{
+                                    padding: '4px 8px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    border: '1px solid #D1D5DB',
+                                    backgroundColor:
+                                      b.booking_status === 'CONFIRMED' ? '#DEF7EC' :
+                                      b.booking_status === 'COMPLETED' ? '#E1EFFE' :
+                                      b.booking_status === 'CANCELLED' ? '#FDE8E8' : '#FEF3C7',
+                                    color:
+                                      b.booking_status === 'CONFIRMED' ? '#03543F' :
+                                      b.booking_status === 'COMPLETED' ? '#1E429F' :
+                                      b.booking_status === 'CANCELLED' ? '#9B1C1C' : '#92400E'
+                                  }}
+                                >
+                                  <option value="PENDING">Pending Review</option>
+                                  <option value="CONFIRMED">Confirmed</option>
+                                  <option value="COMPLETED">Completed</option>
+                                  <option value="CANCELLED">Cancelled</option>
+                                </select>
+                              </td>
+                              <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                                <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleOpenWhatsAppHomestayBooking(b)}
+                                    title="Chat on WhatsApp"
+                                    style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '6px',
+                                      backgroundColor: '#25D366',
+                                      color: '#FFFFFF',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '4px',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 700
+                                    }}
+                                  >
+                                    <MessageCircle size={14} />
+                                    <span>WhatsApp</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteHomestayBooking(b)}
+                                    title="Delete Booking"
+                                    style={{ padding: '6px', borderRadius: '6px', border: '1px solid #FCA5A5', backgroundColor: '#FEF2F2', color: '#DC2626', cursor: 'pointer' }}
+                                  >
+                                    <Trash2 size={15} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        {homestayBookings.length === 0 && (
+                          <tr>
+                            <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#9CA3AF' }}>
+                              No homestay bookings received yet.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </div>
       </div>
 
@@ -5800,6 +6507,279 @@ export default function AdminDashboardPage({ onNavigate }) {
                 </button>
               </div>
 
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: ADD / EDIT HOMESTAY PROPERTY ================= */}
+      {isHomestayModalOpen && (
+        <div
+          onClick={() => setIsHomestayModalOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(14, 34, 53, 0.75)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem',
+            overflowY: 'auto'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '16px',
+              maxWidth: '750px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+              border: '1px solid #E5E7EB'
+            }}
+          >
+            <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <HomeIcon size={20} color="var(--color-secondary)" />
+                {editingHomestay ? 'Edit Homestay Property' : 'Add New Homestay Property'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsHomestayModalOpen(false)}
+                style={{ background: 'none', border: 'none', color: '#9CA3AF', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveHomestay} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Name and Location */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Homestay Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Kanchenjunga Vista Retreat"
+                    value={homestayForm.name}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, name: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Location / Village *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Tukdah Cantonment, Darjeeling"
+                    value={homestayForm.location}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, location: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Region & Room Type */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Region
+                  </label>
+                  <select
+                    value={homestayForm.region}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, region: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  >
+                    <option value="North Bengal">North Bengal / Darjeeling</option>
+                    <option value="Sikkim">Sikkim Himalayas</option>
+                    <option value="Dooars">Dooars & River Valley</option>
+                    <option value="Kalimpong">Kalimpong & Lava</option>
+                    <option value="Offbeat Bengal">Offbeat Countryside</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Room Category / Type
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Deluxe Wooden Cottage"
+                    value={homestayForm.room_type}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, room_type: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Max Guests Allowed
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={homestayForm.max_guests}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, max_guests: parseInt(e.target.value) || 2 })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Pricing & Advance */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Price Per Night (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    min="100"
+                    required
+                    value={homestayForm.price_per_night}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, price_per_night: parseInt(e.target.value) || 1000 })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Advance Booking Deposit (%)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={homestayForm.booking_advance_percent}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, booking_advance_percent: parseInt(e.target.value) || 30 })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Media / Thumbnail */}
+              <MediaUploadField
+                label="Main Thumbnail Image"
+                sublabel="High quality photo of homestay / view"
+                value={homestayForm.thumbnail}
+                onChange={(url) => setHomestayForm({ ...homestayForm, thumbnail: url })}
+                token={token}
+                placeholder="https://... or upload photo"
+              />
+
+              {/* Amenities */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                  Amenities (Comma separated)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Mountain View, Home-cooked Meals, Free WiFi, Hot Water, Bonfire, Nature Walks"
+                  value={homestayForm.amenities}
+                  onChange={(e) => setHomestayForm({ ...homestayForm, amenities: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              {/* Short & Detailed Description */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                  Short Tagline / Overview
+                </label>
+                <input
+                  type="text"
+                  placeholder="Wake up to panoramic views of Mt. Kanchenjunga with authentic local hospitality."
+                  value={homestayForm.short_description}
+                  onChange={(e) => setHomestayForm({ ...homestayForm, short_description: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                  Full Description
+                </label>
+                <textarea
+                  rows="3"
+                  placeholder="Detailed description about the homestay, food options, surrounding spots, and host experience..."
+                  value={homestayForm.description}
+                  onChange={(e) => setHomestayForm({ ...homestayForm, description: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem', resize: 'vertical' }}
+                />
+              </div>
+
+              {/* Host Info */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Host / Caretaker Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Pemba Sherpa"
+                    value={homestayForm.host_name}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, host_name: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                    Host Contact Phone
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. +91 98765 43210"
+                    value={homestayForm.host_phone}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, host_phone: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              {/* Checkboxes: Active & Featured */}
+              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', padding: '10px 14px', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px solid #E5E7EB' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={homestayForm.is_active === 1 || homestayForm.is_active === true}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, is_active: e.target.checked ? 1 : 0 })}
+                    style={{ width: '18px', height: '18px' }}
+                  />
+                  <span>Active Property (Visible to guests)</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={homestayForm.featured === 1 || homestayForm.featured === true}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, featured: e.target.checked ? 1 : 0 })}
+                    style={{ width: '18px', height: '18px' }}
+                  />
+                  <span>Mark as Featured Homestay</span>
+                </label>
+              </div>
+
+              {/* Submit Actions */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '1rem', borderTop: '1px solid #E5E7EB' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsHomestayModalOpen(false)}
+                  style={{ padding: '10px 18px', borderRadius: '6px', backgroundColor: '#F3F4F6', color: '#4B5563', border: '1px solid #D1D5DB', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '10px 24px', borderRadius: '6px', backgroundColor: 'var(--color-secondary, #167C80)', color: '#FFFFFF', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 6px rgba(22, 124, 128, 0.25)' }}
+                >
+                  {editingHomestay ? 'Save Changes' : 'Create Homestay'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

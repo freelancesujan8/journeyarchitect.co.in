@@ -677,6 +677,98 @@ export const ApiClient = {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${token}` }
     });
+  },
+
+  // ================= Homestays Endpoints =================
+  getHomestays: async () => {
+    return fetchJson('/homestays');
+  },
+
+  getHomestaySettings: async () => {
+    return fetchJson('/homestays/settings');
+  },
+
+  getHomestayBySlug: async (slug) => {
+    return fetchJson(`/homestays/${encodeURIComponent(slug)}`);
+  },
+
+  bookHomestay: async (bookingData) => {
+    return fetchJson('/homestays/book', {
+      method: 'POST',
+      body: JSON.stringify(bookingData)
+    });
+  },
+
+  // Admin Homestays
+  getAdminHomestays: async (token) => {
+    return fetchJson('/admin/homestays', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  getAdminHomestaySettings: async (token) => {
+    return fetchJson('/admin/homestays/settings', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  updateAdminHomestaySettings: async (token, settingsData) => {
+    return fetchJson('/admin/homestays/settings', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(settingsData)
+    });
+  },
+
+  createAdminHomestay: async (token, homestayData) => {
+    return fetchJson('/admin/homestays', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(homestayData)
+    });
+  },
+
+  updateAdminHomestay: async (token, id, homestayData) => {
+    return fetchJson(`/admin/homestays/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(homestayData)
+    });
+  },
+
+  deleteAdminHomestay: async (token, id) => {
+    return fetchJson(`/admin/homestays/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  toggleAdminHomestayStatus: async (token, id) => {
+    return fetchJson(`/admin/homestays/${id}/status`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  getAdminHomestayBookings: async (token) => {
+    return fetchJson('/admin/homestays/bookings', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  updateAdminHomestayBookingStatus: async (token, id, statusData) => {
+    return fetchJson(`/admin/homestays/bookings/${id}/status`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(statusData)
+    });
+  },
+
+  deleteAdminHomestayBooking: async (token, id) => {
+    return fetchJson(`/admin/homestays/bookings/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
   }
 };
 export default ApiClient;

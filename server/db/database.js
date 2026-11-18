@@ -551,6 +551,60 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_calendar_events_date ON calendar_events(event_date);
     CREATE INDEX IF NOT EXISTS idx_calendar_events_category ON calendar_events(category);
     CREATE INDEX IF NOT EXISTS idx_calendar_events_status ON calendar_events(status);
+
+    -- 16. Homestays table
+    CREATE TABLE IF NOT EXISTS homestays (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      homestay_id TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      location TEXT NOT NULL,
+      region TEXT DEFAULT 'North Bengal & Sikkim',
+      price_per_night REAL NOT NULL,
+      room_type TEXT DEFAULT 'Deluxe Mountain View Room',
+      max_guests INTEGER DEFAULT 4,
+      amenities TEXT DEFAULT '[]',
+      thumbnail TEXT NOT NULL,
+      gallery_images TEXT DEFAULT '[]',
+      short_description TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      host_name TEXT DEFAULT 'Journey Architect Host',
+      host_phone TEXT DEFAULT '79803 31022',
+      booking_advance_percent INTEGER DEFAULT 25,
+      is_active INTEGER DEFAULT 1,
+      featured INTEGER DEFAULT 0,
+      display_order INTEGER DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_homestays_slug ON homestays(slug);
+    CREATE INDEX IF NOT EXISTS idx_homestays_active ON homestays(is_active);
+
+    -- 17. Homestay Bookings table
+    CREATE TABLE IF NOT EXISTS homestay_bookings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      booking_id TEXT UNIQUE NOT NULL,
+      homestay_id INTEGER,
+      homestay_name TEXT NOT NULL,
+      guest_name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      whatsapp_number TEXT,
+      email TEXT,
+      check_in TEXT NOT NULL,
+      check_out TEXT NOT NULL,
+      nights INTEGER DEFAULT 1,
+      guests_count INTEGER DEFAULT 2,
+      rooms_count INTEGER DEFAULT 1,
+      total_amount REAL NOT NULL,
+      advance_amount REAL NOT NULL,
+      booking_status TEXT DEFAULT 'PENDING',
+      payment_status TEXT DEFAULT 'PENDING',
+      special_requests TEXT,
+      admin_notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX IF NOT EXISTS idx_homestay_bookings_date ON homestay_bookings(check_in);
   `);
 
   // Seed initial packages (Only insert if not already present in database, never overwrite admin edits)
@@ -949,6 +1003,116 @@ export function initDatabase() {
     });
 
     insertAllEvents(initialEvents);
+  }
+
+  // 16. Seed Homestay Settings if not present (Default ON / Enabled: 1)
+  const homestaySetting = db.prepare("SELECT * FROM site_settings WHERE setting_key = 'homestay_settings'").get();
+  if (!homestaySetting) {
+    db.prepare(`
+      INSERT INTO site_settings (setting_key, setting_value)
+      VALUES ('homestay_settings', ?)
+    `).run(JSON.stringify({
+      enabled: 1, // 1 for ON, 0 for OFF
+      section_title: 'Handpicked Mountain & Forest Homestays',
+      section_subtitle: 'Experience authentic Himalayan warmth, organic local home-cooked feasts, and peaceful offbeat stays curated by Journey Architect.'
+    }));
+  }
+
+  // 17. Seed initial Homestays if not already seeded
+  const homestaysSeeded = db.prepare("SELECT setting_value FROM site_settings WHERE setting_key = 'homestays_seeded'").get();
+  if (!homestaysSeeded) {
+    const homestayCount = db.prepare('SELECT COUNT(*) as count FROM homestays').get().count;
+    if (homestayCount === 0) {
+      const insertHomestay = db.prepare(`
+        INSERT INTO homestays (
+          homestay_id, name, slug, location, region, price_per_night, room_type, max_guests,
+          amenities, thumbnail, gallery_images, short_description, description, host_name, host_phone,
+          booking_advance_percent, is_active, featured, display_order
+        ) VALUES (
+          @homestay_id, @name, @slug, @location, @region, @price_per_night, @room_type, @max_guests,
+          @amenities, @thumbnail, @gallery_images, @short_description, @description, @host_name, @host_phone,
+          @booking_advance_percent, @is_active, @featured, @display_order
+        )
+      `);
+
+      const SEED_HOMESTAYS = [
+        {
+          homestay_id: 'HMS-001',
+          name: 'Kanchenjunga Vista Retreat',
+          slug: 'kanchenjunga-vista-retreat-darjeeling',
+          location: 'Tukdah & Lamahatta, Darjeeling',
+          region: 'North Bengal Hills',
+          price_per_night: 1800,
+          room_type: 'Deluxe Wooden Attic Room with Mountain View',
+          max_guests: 4,
+          amenities: JSON.stringify(['Kanchenjunga Sunrise View', 'Home-cooked Meals', '24/7 Geyser / Hot Water', 'Tea Garden Walk', 'High-Speed Wi-Fi', 'Evening Bonfire']),
+          thumbnail: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+          gallery_images: JSON.stringify([
+            'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+            'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80'
+          ]),
+          short_description: 'Wake up to panoramic views of Mt. Kanchenjunga from your wooden balcony amidst misty pine forests and tea slopes.',
+          description: 'Nestled between peaceful Tukdah tea gardens and sacred Lamahatta pine woods, this boutique homestay offers cozy wooden interiors, authentic Nepali and Bengali home-cooked dishes, guided forest walks, and tranquil Himalayan silence.',
+          host_name: 'Pema Bhutia',
+          host_phone: '79803 31022',
+          booking_advance_percent: 25,
+          is_active: 1,
+          featured: 1,
+          display_order: 1
+        },
+        {
+          homestay_id: 'HMS-002',
+          name: 'River Whisper Riverside Cottage',
+          slug: 'river-whisper-riverside-cottage-jhalong',
+          location: 'Jhalong & Bindu, Dooars',
+          region: 'Dooars Foothills',
+          price_per_night: 1500,
+          room_type: 'Private Riverfront Cottage',
+          max_guests: 4,
+          amenities: JSON.stringify(['Jaldhaka River View', 'Campfire & BBQ', 'Traditional Meals', 'Free Parking', 'Bird Watching & Angling']),
+          thumbnail: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=800&q=80',
+          gallery_images: JSON.stringify([
+            'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=80'
+          ]),
+          short_description: 'Stay right beside the gentle rushing waters of River Jaldhaka with peaceful cardamom hills on all sides.',
+          description: 'A serene hideaway in remote Dooars where you can listen to river currents, enjoy evening barbecues by a glowing fire pit, and taste fresh organic garden vegetables cooked with loving care.',
+          host_name: 'Suresh Rai',
+          host_phone: '79803 31022',
+          booking_advance_percent: 25,
+          is_active: 1,
+          featured: 1,
+          display_order: 2
+        },
+        {
+          homestay_id: 'HMS-003',
+          name: 'Alpine Haven Heritage Homestay',
+          slug: 'alpine-haven-heritage-homestay-lachen',
+          location: 'Lachen, North Sikkim',
+          region: 'North Sikkim',
+          price_per_night: 2200,
+          room_type: 'Heated Heritage Pine Suite',
+          max_guests: 3,
+          amenities: JSON.stringify(['Snow Peak View', 'Electric Bed Warmer / Heater', 'Organic Sikkimese Thali', 'Hot Running Water', 'High Altitude Permit Guidance']),
+          thumbnail: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+          gallery_images: JSON.stringify([
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'
+          ]),
+          short_description: 'Your warm, wooden gateway to sacred Gurudongmar Lake and Chopta Valley with traditional hearth hospitality.',
+          description: 'Built with fragrant local pine and stone, this warm homestay in Lachen provides comforting wooden warmth, steaming Sikkimese thukpa and momos, hot water, and trusted local drivers for early morning departures to Gurudongmar Lake.',
+          host_name: 'Dawa Lepcha',
+          host_phone: '79803 31022',
+          booking_advance_percent: 25,
+          is_active: 1,
+          featured: 1,
+          display_order: 3
+        }
+      ];
+
+      for (const h of SEED_HOMESTAYS) {
+        insertHomestay.run(h);
+      }
+    }
+    db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value) VALUES ('homestays_seeded', '1')").run();
   }
 }
 
