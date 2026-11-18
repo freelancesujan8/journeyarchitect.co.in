@@ -248,7 +248,11 @@ export function HomestaySection({ onOpenTripPlanner, navigate }) {
                   }}
                 >
                   {/* Property Image Cover */}
-                  <div style={{ position: 'relative', height: '220px', width: '100%', overflow: 'hidden' }}>
+                  <div
+                    onClick={() => navigate ? navigate(`/homestays/${h.slug}`) : window.location.href = `/homestays/${h.slug}`}
+                    style={{ position: 'relative', height: '220px', width: '100%', overflow: 'hidden', cursor: 'pointer' }}
+                    title="Click to view details, photos and food menu"
+                  >
                     <img
                       src={h.thumbnail || 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80'}
                       alt={h.name}
@@ -299,7 +303,10 @@ export function HomestaySection({ onOpenTripPlanner, navigate }) {
                       <span>Up to {h.max_guests || 4} Guests</span>
                     </div>
 
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--color-primary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>
+                    <h3
+                      onClick={() => navigate ? navigate(`/homestays/${h.slug}`) : window.location.href = `/homestays/${h.slug}`}
+                      style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--color-primary)', margin: '0 0 8px 0', lineHeight: 1.3, cursor: 'pointer' }}
+                    >
                       {h.name}
                     </h3>
 
@@ -340,14 +347,32 @@ export function HomestaySection({ onOpenTripPlanner, navigate }) {
                       <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
                         Host: <strong style={{ color: '#1E293B' }}>{h.host_name || 'Journey Partner'}</strong>
                       </div>
-                      <Button
-                        variant="secondary"
-                        size="small"
-                        icon={<ArrowRight size={14} />}
-                        onClick={() => handleOpenBooking(h)}
-                      >
-                        Book Homestay
-                      </Button>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => navigate ? navigate(`/homestays/${h.slug}`) : window.location.href = `/homestays/${h.slug}`}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            backgroundColor: '#EFF6FF',
+                            color: '#2563EB',
+                            border: '1px solid #BFDBFE',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Details
+                        </button>
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          icon={<ArrowRight size={14} />}
+                          onClick={() => handleOpenBooking(h)}
+                        >
+                          Book Stay
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

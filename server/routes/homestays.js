@@ -77,7 +77,9 @@ homestaysRouter.get('/', (req, res) => {
     const homestays = rows.map((h) => ({
       ...h,
       amenities: safeParseJson(h.amenities, []),
-      gallery_images: safeParseJson(h.gallery_images, [])
+      gallery_images: safeParseJson(h.gallery_images, []),
+      food_menu: safeParseJson(h.food_menu, []),
+      nearby_attractions: safeParseJson(h.nearby_attractions, [])
     }));
 
     res.json({
@@ -109,7 +111,9 @@ homestaysRouter.get('/:slug', (req, res) => {
       homestay: {
         ...row,
         amenities: safeParseJson(row.amenities, []),
-        gallery_images: safeParseJson(row.gallery_images, [])
+        gallery_images: safeParseJson(row.gallery_images, []),
+        food_menu: safeParseJson(row.food_menu, []),
+        nearby_attractions: safeParseJson(row.nearby_attractions, [])
       }
     });
   } catch (err) {

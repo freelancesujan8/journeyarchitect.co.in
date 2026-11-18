@@ -23,6 +23,7 @@ const BlogPage = lazy(() => import('./pages/BlogPage').then(m => ({ default: m.B
 
 // Heavy Booking & Admin Portals
 const PackageDetailPage = lazy(() => import('./pages/PackageDetailPage'));
+const HomestayDetailPage = lazy(() => import('./pages/HomestayDetailPage'));
 const BookingCheckoutPage = lazy(() => import('./pages/BookingCheckoutPage'));
 const BookingSuccessPage = lazy(() => import('./pages/BookingSuccessPage'));
 const BookingLookupPage = lazy(() => import('./pages/BookingLookupPage'));
@@ -102,6 +103,12 @@ export function App() {
     if (currentPath.startsWith('/tours/') && currentPath.length > 7) {
       const slug = currentPath.replace('/tours/', '').split('?')[0];
       return <PackageDetailPage slug={slug} onNavigate={navigate} />;
+    }
+
+    // Dynamic route: /homestays/:slug or /homestay/:slug
+    if ((currentPath.startsWith('/homestays/') && currentPath.length > 11) || (currentPath.startsWith('/homestay/') && currentPath.length > 10)) {
+      const slug = currentPath.replace(/^\/(homestays|homestay)\//, '').split('?')[0];
+      return <HomestayDetailPage slug={slug} onNavigate={navigate} onOpenTripPlanner={handleOpenTripPlanner} />;
     }
 
     // 2. Dynamic route: /services/:slug

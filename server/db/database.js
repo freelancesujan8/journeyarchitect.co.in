@@ -568,6 +568,9 @@ export function initDatabase() {
       gallery_images TEXT DEFAULT '[]',
       short_description TEXT DEFAULT '',
       description TEXT DEFAULT '',
+      food_menu TEXT DEFAULT '[]',
+      house_rules TEXT DEFAULT '',
+      nearby_attractions TEXT DEFAULT '[]',
       host_name TEXT DEFAULT 'Journey Architect Host',
       host_phone TEXT DEFAULT '79803 31022',
       booking_advance_percent INTEGER DEFAULT 25,
@@ -579,7 +582,21 @@ export function initDatabase() {
     );
     CREATE INDEX IF NOT EXISTS idx_homestays_slug ON homestays(slug);
     CREATE INDEX IF NOT EXISTS idx_homestays_active ON homestays(is_active);
+  `);
 
+  // Ensure homestays table has latest columns for existing databases
+  const homestayCols = db.prepare('PRAGMA table_info(homestays)').all().map(c => c.name);
+  if (!homestayCols.includes('food_menu')) {
+    db.exec(`ALTER TABLE homestays ADD COLUMN food_menu TEXT DEFAULT '[]';`);
+  }
+  if (!homestayCols.includes('house_rules')) {
+    db.exec(`ALTER TABLE homestays ADD COLUMN house_rules TEXT DEFAULT '';`);
+  }
+  if (!homestayCols.includes('nearby_attractions')) {
+    db.exec(`ALTER TABLE homestays ADD COLUMN nearby_attractions TEXT DEFAULT '[]';`);
+  }
+
+  db.exec(`
     -- 17. Homestay Bookings table
     CREATE TABLE IF NOT EXISTS homestay_bookings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1113,6 +1130,117 @@ export function initDatabase() {
       }
     }
     db.prepare("INSERT OR REPLACE INTO site_settings (setting_key, setting_value) VALUES ('homestays_seeded', '1')").run();
+  }
+
+  // Ensure existing homestays have food_menu, house_rules and gallery images populated
+  const homestaysWithNoMenu = db.prepare("SELECT id, homestay_id FROM homestays WHERE food_menu IS NULL OR food_menu = '[]' OR food_menu = ''").all();
+  if (homestaysWithNoMenu.length > 0) {
+    const updateMenuStmt = db.prepare(`
+      UPDATE homestays SET
+        food_menu = ?,
+        house_rules = ?,
+        gallery_images = ?
+      WHERE homestay_id = ?
+    `);
+
+    // HMS-001
+    updateMenuStmt.run(
+      JSON.stringify([
+        {
+          day: 'Day 1',
+          title: 'Welcome Feast & Mountain Flavors',
+          morning_tea: 'Darjeeling First Flush Black / Green Tea with butter cookies',
+          breakfast: 'Hot Tibetan Tingmo with Potato-Cheese gravy / Boiled eggs & tea',
+          lunch: 'Steamed Rice, Yellow Moong Dal with pure cow ghee, Aloo Gobi & Fresh Green Salad, Papad, Local Desi Chicken Curry (or Paneer Butter Masala for vegetarians)',
+          evening_snacks: 'Hot Crispy Onion & Mountain Potato Pakoras with fresh mint dip & boiling Darjeeling Tea',
+          dinner: 'Handmade Phulkas (Roti), Steamed Basmati Rice, Tadka Dal, Local Organic Mixed Veg, Kalo Churi Chicken Kasha & Hot Gulab Jamun'
+        },
+        {
+          day: 'Day 2',
+          title: 'Organic Farmhouse Specials',
+          morning_tea: 'Cardamom Spiced Bed Tea / Ginger Lemon Honey Tea',
+          breakfast: 'Crispy Stuffed Aloo & Onion Parathas with homemade creamy curd & hill pickle',
+          lunch: 'Pahari Steamed Rice, Masoor Dal, Gundruk Jhol, Fresh Seasonal Saag, Potato Fry & Traditional Egg Curry / Fish Curry',
+          evening_snacks: 'Handmade Steamed Chicken / Veg Mountain Momos with spicy Dalle chili tomato chutney & clear soup',
+          dinner: 'Hot Chapatis, Jeera Rice, Dal Makhani, Local Country Chicken Gravy / Shahi Paneer, Fresh Garden Salad & Rice Kheer'
+        }
+      ]),
+      '• Check-in Time: 12:00 PM | Check-out Time: 11:00 AM\n• Fresh organic meals are cooked with mountain spring water\n• Evening bonfire & barbecue available on prior notice\n• Please keep the mountain environment clean and plastic-free\n• Valid Government Photo ID required at check-in',
+      JSON.stringify([
+        'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80'
+      ]),
+      'HMS-001'
+    );
+
+    // HMS-002
+    updateMenuStmt.run(
+      JSON.stringify([
+        {
+          day: 'Day 1',
+          title: 'Riverside Traditional Feast',
+          morning_tea: 'Fresh Milk Tea / Black Lemon Tea',
+          breakfast: 'Luchi with Aloo Dum, Boiled Eggs & Sweets',
+          lunch: 'Fine Rice, Sona Moong Dal, Begun Bhaja, Fresh River Fish Curry (or Katla Kalia), Salad & Chatni',
+          evening_snacks: 'Chicken / Egg Chowmein or Veg Pakora with piping hot tea',
+          dinner: 'Hot Roti / Fried Rice, Chana Dal, Desi Murgi Curry & Rosogolla'
+        },
+        {
+          day: 'Day 2',
+          title: 'Barbecue & Campfire Specials',
+          morning_tea: 'Herbal Green Tea with ginger & honey',
+          breakfast: 'Radhaballabhi with Chholar Dal & sweet',
+          lunch: 'Pulao, Dal Fry, Potato Chips, Mutton / Chicken Curry & Tomato Chutney',
+          evening_snacks: 'Open Campfire Smoky BBQ Chicken Skewers with Mint Sauce & Masala Tea',
+          dinner: 'Tawa Roti, Mix Veg, Egg Curry / Paneer Do Pyaza & Mishti Doi'
+        }
+      ]),
+      '• Check-in: 11:30 AM | Check-out: 10:30 AM\n• Jaldhaka riverbank walking trail right beside property\n• Fishing gear available on request\n• Sound limit after 10:00 PM for wilderness peacefulness',
+      JSON.stringify([
+        'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1200&q=80'
+      ]),
+      'HMS-002'
+    );
+
+    // HMS-003
+    updateMenuStmt.run(
+      JSON.stringify([
+        {
+          day: 'Day 1',
+          title: 'Alpine Hearth Warmth',
+          morning_tea: 'Hot Butter Tea / Himalayan Green Tea with local bread',
+          breakfast: 'Hot Tibetan Pancakes with honey / Vegetable Maggi / Boiled Eggs',
+          lunch: 'Hot Rice, Dal, Potato fry, Local Cabbage & Sikkim Chicken Curry',
+          evening_snacks: 'Steaming Thukpa noodle soup with vegetables / chicken & hot tea',
+          dinner: 'Warm Chapatis, Dal, Sikkimese Organic Veg, Chicken Curry & Dessert'
+        },
+        {
+          day: 'Day 2',
+          title: 'High-Altitude Energy Meals',
+          morning_tea: 'Hot Cardamom Ginger Tea (Early 5:00 AM for Gurudongmar trip)',
+          breakfast: 'Packed breakfast of Boiled Eggs, Sandwiches & Hot Flask Tea',
+          lunch: 'Warm Khichdi with Aloo Chokha & Papad, or Full Thali upon return',
+          evening_snacks: 'Hot Veg Pakoras & Darjeeling Milk Tea',
+          dinner: 'Phulkas, Jeera Rice, Tadka Dal, Chicken Kasha & Sweet'
+        }
+      ]),
+      '• Check-in: 1:00 PM | Check-out: 10:00 AM\n• Electric bed warmers provided in all rooms\n• Early morning wake-up call & tea for Gurudongmar Lake permit departure\n• Valid Voter ID / Passport and passport photos mandatory for North Sikkim permit',
+      JSON.stringify([
+        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=80'
+      ]),
+      'HMS-003'
+    );
   }
 }
 

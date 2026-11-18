@@ -360,12 +360,25 @@ export default function AdminDashboardPage({ onNavigate }) {
       max_guests: 4,
       amenities: 'Mountain View, Home-cooked Meals, Free WiFi, Hot Water, Bonfire, Nature Walks',
       thumbnail: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=800&q=80',
-      gallery_images: '',
+      gallery_images: [],
+      newGalleryImageUrl: '',
+      food_menu: [
+        {
+          day: 'Day 1',
+          title: 'Welcome Feast',
+          morning_tea: 'First Flush Darjeeling Black / Green Tea with butter cookies',
+          breakfast: 'Hot Tibetan Bread / Puri Sabji with tea & boiled eggs',
+          lunch: 'Steamed Rice, Yellow Dal, Seasonal Veg, Salad & Desi Chicken Curry',
+          evening_snacks: 'Hot Onion Pakoras with mint chutney & Darjeeling Tea',
+          dinner: 'Chapatis / Rice, Dal, Mixed Mountain Veg & Chicken Curry'
+        }
+      ],
+      house_rules: '• Check-in: 12:00 PM | Check-out: 11:00 AM\n• Fresh organic meals are cooked with mountain spring water\n• Bonfire & BBQ available on prior notice\n• Valid Government Photo ID required at check-in',
       short_description: '',
       description: '',
       host_name: '',
       host_phone: '',
-      booking_advance_percent: 30,
+      booking_advance_percent: 25,
       is_active: 1,
       featured: 0,
       display_order: 0
@@ -1350,11 +1363,24 @@ export default function AdminDashboardPage({ onNavigate }) {
       return;
     }
     try {
+      const payload = {
+        ...homestayForm,
+        amenities: typeof homestayForm.amenities === 'string'
+          ? homestayForm.amenities.split(',').map(s => s.trim()).filter(Boolean)
+          : homestayForm.amenities,
+        gallery_images: Array.isArray(homestayForm.gallery_images)
+          ? homestayForm.gallery_images.filter(Boolean)
+          : [],
+        food_menu: Array.isArray(homestayForm.food_menu)
+          ? homestayForm.food_menu
+          : []
+      };
+
       if (editingHomestay) {
-        await ApiClient.updateAdminHomestay(token, editingHomestay.id, homestayForm);
+        await ApiClient.updateAdminHomestay(token, editingHomestay.id, payload);
         showFeedback(`Homestay "${homestayForm.name}" updated successfully!`);
       } else {
-        await ApiClient.createAdminHomestay(token, homestayForm);
+        await ApiClient.createAdminHomestay(token, payload);
         showFeedback(`New homestay "${homestayForm.name}" added successfully!`);
       }
       setIsHomestayModalOpen(false);
@@ -4387,14 +4413,27 @@ export default function AdminDashboardPage({ onNavigate }) {
                                         price_per_night: h.price_per_night || 1500,
                                         room_type: h.room_type || 'Standard Double Room',
                                         max_guests: h.max_guests || 4,
-                                        amenities: h.amenities || '',
+                                        amenities: Array.isArray(h.amenities) ? h.amenities.join(', ') : (h.amenities || ''),
                                         thumbnail: h.thumbnail || '',
-                                        gallery_images: h.gallery_images || '',
+                                        gallery_images: Array.isArray(h.gallery_images) ? h.gallery_images : [],
+                                        newGalleryImageUrl: '',
+                                        food_menu: Array.isArray(h.food_menu) && h.food_menu.length > 0 ? h.food_menu : [
+                                          {
+                                            day: 'Day 1',
+                                            title: 'Welcome Feast',
+                                            morning_tea: '',
+                                            breakfast: '',
+                                            lunch: '',
+                                            evening_snacks: '',
+                                            dinner: ''
+                                          }
+                                        ],
+                                        house_rules: h.house_rules || '',
                                         short_description: h.short_description || '',
                                         description: h.description || '',
                                         host_name: h.host_name || '',
                                         host_phone: h.host_phone || '',
-                                        booking_advance_percent: h.booking_advance_percent || 30,
+                                        booking_advance_percent: h.booking_advance_percent || 25,
                                         is_active: h.is_active,
                                         featured: h.featured || 0,
                                         display_order: h.display_order || 0
@@ -6711,6 +6750,266 @@ export default function AdminDashboardPage({ onNavigate }) {
                   value={homestayForm.description}
                   onChange={(e) => setHomestayForm({ ...homestayForm, description: e.target.value })}
                   style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem', resize: 'vertical' }}
+                />
+              </div>
+
+              {/* Photo Gallery Management */}
+              <div style={{ backgroundColor: '#F9FAFB', padding: '14px', borderRadius: '10px', border: '1px solid #E5E7EB' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                    📸 Homestay Photo Gallery ({homestayForm.gallery_images?.length || 0} Photos)
+                  </label>
+                  <span style={{ fontSize: '0.72rem', color: '#6B7280' }}>
+                    Photos appear in the property gallery & full-screen lightbox
+                  </span>
+                </div>
+
+                {/* Thumbnails List */}
+                {Array.isArray(homestayForm.gallery_images) && homestayForm.gallery_images.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
+                    {homestayForm.gallery_images.map((imgUrl, imgIdx) => (
+                      <div key={imgIdx} style={{ position: 'relative', width: '90px', height: '65px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #D1D5DB' }}>
+                        <img src={imgUrl} alt={`Gallery ${imgIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setHomestayForm({
+                              ...homestayForm,
+                              gallery_images: homestayForm.gallery_images.filter((_, i) => i !== imgIdx)
+                            });
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: '2px',
+                            right: '2px',
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
+                            backgroundColor: '#EF4444',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            lineHeight: 1
+                          }}
+                          title="Remove Photo"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add new photo to gallery */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    placeholder="Paste image URL to add to gallery..."
+                    value={homestayForm.newGalleryImageUrl || ''}
+                    onChange={(e) => setHomestayForm({ ...homestayForm, newGalleryImageUrl: e.target.value })}
+                    style={{ flex: 1, padding: '7px 10px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.82rem' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!homestayForm.newGalleryImageUrl?.trim()) return;
+                      setHomestayForm({
+                        ...homestayForm,
+                        gallery_images: [...(homestayForm.gallery_images || []), homestayForm.newGalleryImageUrl.trim()],
+                        newGalleryImageUrl: ''
+                      });
+                    }}
+                    style={{ padding: '7px 14px', borderRadius: '6px', backgroundColor: 'var(--color-primary)', color: '#FFFFFF', border: 'none', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    + Add Photo
+                  </button>
+                </div>
+              </div>
+
+              {/* Day-to-Day Food Menu Management */}
+              <div style={{ backgroundColor: '#F9FAFB', padding: '14px', borderRadius: '10px', border: '1px solid #E5E7EB' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                      🍽️ Day-to-Day Food Menu & Meals
+                    </label>
+                    <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>
+                      Configure daily morning tea, breakfast, lunch, evening snacks, and dinner
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentMenu = Array.isArray(homestayForm.food_menu) ? homestayForm.food_menu : [];
+                      const nextDayNum = currentMenu.length + 1;
+                      setHomestayForm({
+                        ...homestayForm,
+                        food_menu: [
+                          ...currentMenu,
+                          {
+                            day: `Day ${nextDayNum}`,
+                            title: `Day ${nextDayNum} Special Feast`,
+                            morning_tea: '',
+                            breakfast: '',
+                            lunch: '',
+                            evening_snacks: '',
+                            dinner: ''
+                          }
+                        ]
+                      });
+                    }}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '6px',
+                      backgroundColor: '#ECFDF5',
+                      color: '#065F46',
+                      border: '1px solid #A7F3D0',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    + Add Another Day
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {Array.isArray(homestayForm.food_menu) && homestayForm.food_menu.map((menuDay, mIdx) => (
+                    <div key={mIdx} style={{ backgroundColor: '#FFFFFF', borderRadius: '8px', padding: '12px', border: '1px solid #E5E7EB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', flex: 1, marginRight: '8px' }}>
+                          <input
+                            type="text"
+                            placeholder="e.g. Day 1"
+                            value={menuDay.day || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], day: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '90px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.8rem', fontWeight: 700 }}
+                          />
+                          <input
+                            type="text"
+                            placeholder="e.g. Welcome Feast & Mountain Flavors"
+                            value={menuDay.title || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], title: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ flex: 1, padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.8rem' }}
+                          />
+                        </div>
+                        {homestayForm.food_menu.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setHomestayForm({
+                                ...homestayForm,
+                                food_menu: homestayForm.food_menu.filter((_, i) => i !== mIdx)
+                              });
+                            }}
+                            style={{ padding: '4px 8px', borderRadius: '6px', backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FCA5A5', fontSize: '0.75rem', cursor: 'pointer' }}
+                            title="Remove this day"
+                          >
+                            Remove Day
+                          </button>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
+                        <div>
+                          <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#4B5563', display: 'block' }}>☕ Morning Bed Tea</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Darjeeling Black/Green Tea with cookies"
+                            value={menuDay.morning_tea || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], morning_tea: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '100%', padding: '5px 8px', borderRadius: '4px', border: '1px solid #D1D5DB', fontSize: '0.78rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#4B5563', display: 'block' }}>🍳 Breakfast</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Tibetan Tingmo with Potato-Cheese gravy, Boiled Eggs"
+                            value={menuDay.breakfast || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], breakfast: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '100%', padding: '5px 8px', borderRadius: '4px', border: '1px solid #D1D5DB', fontSize: '0.78rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#4B5563', display: 'block' }}>🍲 Lunch</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Steamed Rice, Dal, Veg, Papad, Desi Chicken Curry"
+                            value={menuDay.lunch || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], lunch: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '100%', padding: '5px 8px', borderRadius: '4px', border: '1px solid #D1D5DB', fontSize: '0.78rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#4B5563', display: 'block' }}>🫖 Evening Snacks</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Hot Onion Pakoras with mint chutney & Darjeeling Tea"
+                            value={menuDay.evening_snacks || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], evening_snacks: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '100%', padding: '5px 8px', borderRadius: '4px', border: '1px solid #D1D5DB', fontSize: '0.78rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#4B5563', display: 'block' }}>🍗 Dinner</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Roti, Basmati Rice, Tadka Dal, Chicken Kasha & Sweet"
+                            value={menuDay.dinner || ''}
+                            onChange={(e) => {
+                              const updated = [...homestayForm.food_menu];
+                              updated[mIdx] = { ...updated[mIdx], dinner: e.target.value };
+                              setHomestayForm({ ...homestayForm, food_menu: updated });
+                            }}
+                            style={{ width: '100%', padding: '5px 8px', borderRadius: '4px', border: '1px solid #D1D5DB', fontSize: '0.78rem' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* House Rules & Policies */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '4px' }}>
+                  House Rules & Policies
+                </label>
+                <textarea
+                  rows="2"
+                  placeholder="e.g. Check-in: 12:00 PM | Check-out: 11:00 AM&#10;• Fresh home-cooked meals served on order&#10;• Bonfire & BBQ on prior notice"
+                  value={homestayForm.house_rules || ''}
+                  onChange={(e) => setHomestayForm({ ...homestayForm, house_rules: e.target.value })}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '0.85rem', resize: 'vertical' }}
                 />
               </div>
 

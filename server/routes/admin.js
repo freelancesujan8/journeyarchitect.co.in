@@ -2057,7 +2057,9 @@ adminRouter.get('/homestays', requireAdminAuth, (req, res) => {
     const homestays = rows.map((h) => ({
       ...h,
       amenities: safeParseJson(h.amenities, []),
-      gallery_images: safeParseJson(h.gallery_images, [])
+      gallery_images: safeParseJson(h.gallery_images, []),
+      food_menu: safeParseJson(h.food_menu, []),
+      nearby_attractions: safeParseJson(h.nearby_attractions, [])
     }));
     res.json({ success: true, count: homestays.length, homestays });
   } catch (err) {
@@ -2082,11 +2084,13 @@ adminRouter.post('/homestays', requireAdminAuth, (req, res) => {
     const stmt = db.prepare(`
       INSERT INTO homestays (
         homestay_id, name, slug, location, region, price_per_night, room_type, max_guests,
-        amenities, thumbnail, gallery_images, short_description, description, host_name, host_phone,
+        amenities, thumbnail, gallery_images, food_menu, house_rules, nearby_attractions,
+        short_description, description, host_name, host_phone,
         booking_advance_percent, is_active, featured, display_order
       ) VALUES (
         ?, ?, ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?,
         ?, ?, ?, ?
       )
     `);
@@ -2103,6 +2107,9 @@ adminRouter.post('/homestays', requireAdminAuth, (req, res) => {
       safeStringifyJson(data.amenities, ['Mountain View', 'Home-cooked Meals', '24/7 Hot Water', 'Free Wi-Fi']),
       data.thumbnail || 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
       safeStringifyJson(data.gallery_images, []),
+      safeStringifyJson(data.food_menu, []),
+      data.house_rules || '',
+      safeStringifyJson(data.nearby_attractions, []),
       data.short_description || '',
       data.description || '',
       data.host_name || 'Journey Architect Host',
@@ -2158,6 +2165,9 @@ adminRouter.put('/homestays/:id', requireAdminAuth, (req, res) => {
         amenities = ?,
         thumbnail = ?,
         gallery_images = ?,
+        food_menu = ?,
+        house_rules = ?,
+        nearby_attractions = ?,
         short_description = ?,
         description = ?,
         host_name = ?,
@@ -2179,6 +2189,9 @@ adminRouter.put('/homestays/:id', requireAdminAuth, (req, res) => {
       data.amenities !== undefined ? safeStringifyJson(data.amenities, []) : existing.amenities,
       data.thumbnail !== undefined ? data.thumbnail : existing.thumbnail,
       data.gallery_images !== undefined ? safeStringifyJson(data.gallery_images, []) : existing.gallery_images,
+      data.food_menu !== undefined ? safeStringifyJson(data.food_menu, []) : existing.food_menu,
+      data.house_rules !== undefined ? data.house_rules : existing.house_rules,
+      data.nearby_attractions !== undefined ? safeStringifyJson(data.nearby_attractions, []) : existing.nearby_attractions,
       data.short_description !== undefined ? data.short_description : existing.short_description,
       data.description !== undefined ? data.description : existing.description,
       data.host_name !== undefined ? data.host_name : existing.host_name,
