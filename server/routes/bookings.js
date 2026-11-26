@@ -17,10 +17,10 @@ export function calculateServerPricing(pkg, adultsCount = 1, childrenCount = 0) 
   const totalPrice = !isNaN(rawTotalPrice) && rawTotalPrice > 0 ? rawTotalPrice : 15000;
 
   const rawAdultPrice = Number(pkg.adult_price);
-  const adultPrice = !isNaN(rawAdultPrice) && rawAdultPrice > 0 ? rawAdultPrice : Math.round(totalPrice / 2);
+  const adultPrice = !isNaN(rawAdultPrice) && rawAdultPrice > 0 && (rawAdultPrice !== 7500 || totalPrice === 7500) ? rawAdultPrice : totalPrice;
 
   const rawChildPrice = Number(pkg.child_price);
-  const childPrice = !isNaN(rawChildPrice) && rawChildPrice > 0 ? rawChildPrice : Math.round(totalPrice * 0.35);
+  const childPrice = !isNaN(rawChildPrice) && rawChildPrice > 0 ? rawChildPrice : Math.round(totalPrice * 0.5);
 
   let totalAmount = 0;
   if (adultPrice > 0) {

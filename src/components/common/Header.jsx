@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Menu, X, Phone, MessageCircle, Send, ChevronRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { Button } from './Button';
@@ -57,7 +58,8 @@ export function Header({ currentPath, navigate, onOpenTripPlanner }) {
         zIndex: 'var(--z-header)',
         transition: 'background-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease',
         backgroundColor: isHeaderTransparent ? 'transparent' : 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: isHeaderTransparent ? 'none' : 'blur(16px)',
+        backdropFilter: isHeaderTransparent ? 'none' : (mobileMenuOpen ? 'none' : 'blur(16px)'),
+        WebkitBackdropFilter: isHeaderTransparent ? 'none' : (mobileMenuOpen ? 'none' : 'blur(16px)'),
         borderBottom: isHeaderTransparent ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid var(--color-border)',
         boxShadow: isScrolled ? 'var(--shadow-sm)' : 'none',
         padding: isScrolled ? '4px 0' : '6px 0'
@@ -161,19 +163,21 @@ export function Header({ currentPath, navigate, onOpenTripPlanner }) {
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
-      {mobileMenuOpen && (
+      {/* Mobile Navigation Drawer rendered via Portal directly into document.body */}
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
         <div
           className="mobile-drawer-overlay animate-fade-in"
           style={{
             position: 'fixed',
             inset: 0,
-            top: 'var(--header-height)',
-            backgroundColor: 'rgba(18, 48, 74, 0.5)',
-            backdropFilter: 'blur(6px)',
-            zIndex: 999,
+            backgroundColor: 'rgba(18, 48, 74, 0.65)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            zIndex: 99999,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            overflow: 'hidden'
           }}
           onClick={() => setMobileMenuOpen(false)}
         >
@@ -182,15 +186,16 @@ export function Header({ currentPath, navigate, onOpenTripPlanner }) {
             style={{
               backgroundColor: '#FFFFFF',
               width: '100%',
-              maxHeight: 'calc(100vh - var(--header-height))',
+              maxHeight: '90vh',
               overflowY: 'auto',
-              padding: '1.5rem',
-              boxShadow: 'var(--shadow-xl)',
-              borderBottom: '2px solid var(--color-border)'
+              padding: '1.25rem 1.5rem 2rem 1.5rem',
+              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.25)',
+              borderBottomLeftRadius: '24px',
+              borderBottomRightRadius: '24px'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Brand Logo in mobile menu */}
+            {/* Brand Logo & Close X Button */}
             <div
               style={{
                 display: 'flex',
@@ -201,19 +206,40 @@ export function Header({ currentPath, navigate, onOpenTripPlanner }) {
                 marginBottom: '1rem'
               }}
             >
-              <Logo size="sm" />
-              <span
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Logo size="sm" />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    backgroundColor: 'var(--color-secondary-subtle)',
+                    color: 'var(--color-secondary)',
+                    padding: '3px 8px',
+                    borderRadius: '4px'
+                  }}
+                >
+                  Official Menu
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  backgroundColor: 'var(--color-secondary-subtle)',
-                  color: 'var(--color-secondary)',
-                  padding: '4px 8px',
-                  borderRadius: '4px'
+                  background: 'var(--color-bg)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '50%',
+                  width: '38px',
+                  height: '38px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-primary)',
+                  cursor: 'pointer'
                 }}
+                aria-label="Close navigation"
               >
-                Official Portal
-              </span>
+                <X size={20} />
+              </button>
             </div>
 
             {/* Mobile Nav Links */}
@@ -280,7 +306,8 @@ export function Header({ currentPath, navigate, onOpenTripPlanner }) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Embedded Component Styles */}

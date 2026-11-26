@@ -76,7 +76,7 @@ export default function BookingCheckoutPage({ slug, onNavigate }) {
           } catch (pErr) {
             // Local price calculation fallback
             const validTotal = Number(loadedPkg.total_price) || 15000;
-            const adultRate = Number(loadedPkg.adult_price) || Math.round(validTotal / 2) || 7500;
+            const adultRate = Number(loadedPkg.adult_price) || validTotal;
             const subtotal = adultRate * 2;
             const advance = Number(loadedPkg.booking_amount) || Math.round(subtotal * 0.25) || 2500;
             if (isMounted) {
@@ -122,7 +122,7 @@ export default function BookingCheckoutPage({ slug, onNavigate }) {
       } catch (err) {
         console.error('Error recalculating price:', err);
         const validTotal = Number(pkg.total_price) || 15000;
-        const adultRate = Number(pkg.adult_price) || Math.round(validTotal / 2) || 7500;
+        const adultRate = Number(pkg.adult_price) || validTotal;
         const childRate = Number(pkg.child_price) || Math.round(validTotal * 0.35) || 4500;
         const subtotal = (adults * adultRate) + (children * childRate);
         const advance = Number(pkg.booking_amount) || Math.round(subtotal * 0.25) || 2500;

@@ -195,7 +195,7 @@ export function generateBookingPDF(booking) {
 
   doc.setFontSize(7.5);
   doc.setTextColor(...mutedText);
-  doc.text('Thank you for choosing Journey Architect (Bongaon, West Bengal).', pageWidth / 2, footerY, { align: 'center' });
+  doc.text('Thank you for choosing Journey Architect (Kolkata, West Bengal).', pageWidth / 2, footerY, { align: 'center' });
   doc.text('This document is electronically generated and serves as an official booking voucher. No physical signature is required.', pageWidth / 2, footerY + 4, { align: 'center' });
 
   // Save the generated PDF

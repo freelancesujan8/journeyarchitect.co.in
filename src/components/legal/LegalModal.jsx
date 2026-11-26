@@ -99,7 +99,7 @@ export function LegalModal({ policyId, isOpen, onClose }) {
       body: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: 'var(--color-text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6 }}>
           <p>
-            Welcome to the website of <strong>{BUSINESS_CONFIG.name}</strong>, a tour operator operating from Bongaon, West Bengal.
+            Welcome to the website of <strong>{BUSINESS_CONFIG.name}</strong>, a licensed tour operator operating from Kolkata and North 24 Parganas, West Bengal.
           </p>
           <h4 style={{ color: 'var(--color-primary)', fontSize: '1.05rem', marginTop: '0.5rem' }}>Service Representations</h4>
           <p>

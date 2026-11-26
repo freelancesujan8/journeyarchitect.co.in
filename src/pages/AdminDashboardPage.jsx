@@ -427,7 +427,7 @@ export default function AdminDashboardPage({ onNavigate }) {
       duration_days: 4,
       duration_nights: 3,
       total_price: 15000,
-      adult_price: 7500,
+      adult_price: 15000,
       child_price: 4500,
       booking_amount: 2500,
       availability_status: 'available',
@@ -4743,12 +4743,19 @@ export default function AdminDashboardPage({ onNavigate }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Total Price (₹) *</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '4px' }}>Package Price / Per Person (₹) *</label>
                   <input
                     type="number"
                     required
                     value={packageForm.total_price}
-                    onChange={(e) => setPackageForm({ ...packageForm, total_price: e.target.value })}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setPackageForm(prev => ({
+                        ...prev,
+                        total_price: val,
+                        adult_price: val
+                      }));
+                    }}
                     style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
                   />
                 </div>

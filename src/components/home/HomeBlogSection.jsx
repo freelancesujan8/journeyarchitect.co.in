@@ -490,7 +490,7 @@ export function HomeBlogSection({ navigate, onOpenTripPlanner }) {
                       {activeArticle.author?.name}
                     </strong>
                     <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
-                      {activeArticle.author?.role} • Journey Architect Bongaon
+                      {activeArticle.author?.role} • Journey Architect, Kolkata
                     </span>
                   </div>
                 </div>

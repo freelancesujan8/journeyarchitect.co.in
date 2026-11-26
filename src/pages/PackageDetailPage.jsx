@@ -261,7 +261,7 @@ export default function PackageDetailPage({ slug, onNavigate }) {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <ShieldCheck size={17} color="#2AD5DC" />
-                <span><strong>Tour Operator:</strong> Journey Architect, Bongaon</span>
+                <span><strong>Tour Operator:</strong> Journey Architect, Kolkata</span>
               </div>
             </div>
           </div>
@@ -287,9 +287,9 @@ export default function PackageDetailPage({ slug, onNavigate }) {
                 <h2 style={{ fontSize: '1.4rem', color: 'var(--color-primary)', marginBottom: '12px', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
                   Tour Overview & Experience
                 </h2>
-                <p style={{ color: 'var(--color-text-main)', fontSize: '0.975rem', lineHeight: '1.7', margin: '0 0 16px 0' }}>
+                <div style={{ color: 'var(--color-text-main)', fontSize: '0.975rem', lineHeight: '1.75', margin: '0 0 16px 0', whiteSpace: 'pre-line', wordBreak: 'break-word' }}>
                   {pkg.description || pkg.short_description}
-                </p>
+                </div>
 
                 {/* 3 Core Accommodation Pillars */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginTop: '20px', paddingTop: '20px', borderTop: '1px solid var(--color-border-light)' }}>
@@ -460,7 +460,7 @@ export default function PackageDetailPage({ slug, onNavigate }) {
                   <Info size={18} color="var(--color-secondary)" />
                   <span>Important Guidelines & Cancellation Terms</span>
                 </h3>
-                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '8px', whiteSpace: 'pre-line' }}>
                   <p style={{ margin: 0 }}><strong>Travel Notes:</strong> {pkg.important_notes || 'Please carry valid government photo IDs for all travelers.'}</p>
                   <p style={{ margin: 0 }}><strong>Cancellation & Rescheduling:</strong> {pkg.cancellation_policy || 'Free date rescheduling up to 7 days before departure. Advance booking amount is refundable as per standard policy.'}</p>
                 </div>
@@ -486,9 +486,9 @@ export default function PackageDetailPage({ slug, onNavigate }) {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '4px 0 14px 0' }}>
                   <span style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--color-primary)' }}>
-                    ₹{Number(pkg.adult_price || pkg.total_price / 2 || 12000).toLocaleString('en-IN')}
+                    ₹{Number(pkg.total_price || pkg.adult_price || 0).toLocaleString('en-IN')}
                   </span>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>/ adult</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>/ person</span>
                 </div>
 
                 {/* Advance Amount Highlight Box */}
@@ -570,7 +570,7 @@ export default function PackageDetailPage({ slug, onNavigate }) {
                 {/* Contact Information & Office Details */}
                 <div style={{ paddingTop: '16px', borderTop: '1px solid var(--color-border-light)', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.825rem' }}>
                   <div style={{ fontWeight: 700, color: 'var(--color-primary)', marginBottom: '2px', fontSize: '0.85rem' }}>
-                    Need Assistance? Contact Our Bongaon Team:
+                    Need Assistance? Contact Our Kolkata Team:
                   </div>
 
                   <a
