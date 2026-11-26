@@ -330,9 +330,10 @@ export const DESTINATION_CATEGORIES = [
   { id: "long-distance", label: "Long distance" },
   { id: "weekend", label: "Weekend" },
   { id: "day-trip", label: "Day Trip" },
-  { id: "picnic", label: "Get togethor / Picnic" },
-  { id: "upcoming", label: "Upcomeing" },
+  { id: "picnic", label: "Get Together / Picnic" },
+  { id: "upcoming", label: "Upcoming" },
   { id: "mountains", label: "Hills & Mountains" },
   { id: "nature", label: "Nature & Wildlife" },
-  { id: "coastal", label: "Beaches & Coastal" }
+  { id: "coastal", label: "Beaches & Coastal" },
+  { id: "heritage", label: "Heritage & Pilgrimage" }
 ];

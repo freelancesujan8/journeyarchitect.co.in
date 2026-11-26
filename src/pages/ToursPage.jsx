@@ -204,11 +204,11 @@ export function ToursPage({ onOpenTripPlanner, navigate }) {
                             'long-distance': 'Long distance',
                             'weekend': 'Weekend',
                             'day-trip': 'Day Trip',
-                            'picnic': 'Get togethor / Picnic',
-                            'upcoming': 'Upcomeing',
-                            'mountains': 'Mountains & Hills',
+                            'picnic': 'Get Together / Picnic',
+                            'upcoming': 'Upcoming',
+                            'mountains': 'Hills & Mountains',
                             'nature': 'Nature & Wildlife',
-                            'coastal': 'Beach & Coastal',
+                            'coastal': 'Beaches & Coastal',
                             'heritage': 'Heritage & Pilgrimage'
                           }[pkg.tour_category] || pkg.tour_category || 'Tour Package')}
                         </span>

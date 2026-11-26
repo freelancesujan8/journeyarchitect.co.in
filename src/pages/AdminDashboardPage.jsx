@@ -4710,11 +4710,11 @@ export default function AdminDashboardPage({ onNavigate }) {
                     <option value="long-distance">Long distance</option>
                     <option value="weekend">Weekend</option>
                     <option value="day-trip">Day Trip</option>
-                    <option value="picnic">Get togethor / Picnic</option>
-                    <option value="upcoming">Upcomeing</option>
-                    <option value="mountains">Mountains & Hills</option>
+                    <option value="picnic">Get Together / Picnic</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="mountains">Hills & Mountains</option>
                     <option value="nature">Nature & Wildlife</option>
-                    <option value="coastal">Coastal & Sea</option>
+                    <option value="coastal">Beaches & Coastal</option>
                     <option value="heritage">Heritage & Pilgrimage</option>
                   </select>
                 </div>

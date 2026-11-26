@@ -41,11 +41,12 @@ export function PopularDestinations({ onOpenTripPlanner, navigate }) {
               'long-distance': 'Long distance',
               'weekend': 'Weekend',
               'day-trip': 'Day Trip',
-              'picnic': 'Get togethor / Picnic',
-              'upcoming': 'Upcomeing',
+              'picnic': 'Get Together / Picnic',
+              'upcoming': 'Upcoming',
               'mountains': 'Hills & Mountains',
-              'nature': 'Wildlife Safari',
-              'coastal': 'Beach & Coastal'
+              'nature': 'Nature & Wildlife',
+              'coastal': 'Beaches & Coastal',
+              'heritage': 'Heritage & Pilgrimage'
             }[pkg.tour_category] || pkg.tour_category || 'Tour Package')
           }));
           setPackages(formatted);
