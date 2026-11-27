@@ -583,6 +583,50 @@ export function Footer({ navigate, onOpenLegalModal, onOpenTripPlanner }) {
             ))}
           </div>
         </div>
+
+        {/* Developer Credit Line */}
+        <div
+          style={{
+            paddingTop: '1rem',
+            marginTop: '1rem',
+            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            fontSize: '0.8125rem',
+            color: 'rgba(255, 255, 255, 0.55)',
+            textAlign: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
+          <span>Design and Develop by</span>
+          <a
+            href="https://sujanmondal.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--color-accent, #F4A340)',
+              fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#FFFFFF';
+              e.currentTarget.style.textDecoration = 'underline';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-accent, #F4A340)';
+              e.currentTarget.style.textDecoration = 'none';
+            }}
+            title="Design and Developed by Sujan (sujanmondal.com)"
+          >
+            Sujan
+          </a>
+        </div>
       </div>
     </footer>
   );
